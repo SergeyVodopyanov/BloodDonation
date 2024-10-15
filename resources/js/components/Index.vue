@@ -11,28 +11,35 @@
             >Personal</router-link
         >
         <a v-if="accessToken" href="#" @click.prevent="logout">Logout</a>
+
+        <p>Access Token: {{ accessToken }}</p>
+
         <router-view></router-view>
     </div>
 </template>
 
 <script setup>
-import { ref, onUpdated, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import api from "../api";
 import router from "../router";
 
 let accessToken = ref(null);
+
 onMounted(() => {
     getAccessToken();
 });
-onUpdated(() => {
-    getAccessToken();
+
+// Следим за изменениями токена
+watch(accessToken, (newVal) => {
+    const token = localStorage.getItem("access_token");
+    accessToken.value = token;
+    console.log("Updated access token:", token);
 });
 
 function logout() {
-    //Если использовать просто axios, то надо прокидывать с localStorageокен, а в api он уже прокидывается
-    api.post("/api/auth/logout").then((res) => {
+    api.post("/api/auth/logout").then(() => {
         localStorage.removeItem("access_token");
-        router.push({ name: "user.login" });
+        accessToken.value = null;
     });
 }
 

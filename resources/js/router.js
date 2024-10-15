@@ -3,6 +3,10 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         {
+            path: "/",
+            redirect: { name: "user.login" }, // Перенаправление на user.login
+        },
+        {
             path: "/fruits",
             component: () => import("./components/Fruit/Index.vue"),
             name: "fruit.index",

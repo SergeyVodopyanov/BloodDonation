@@ -13,6 +13,8 @@ class User extends Authenticatable implements JWTSubject
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    protected $table = 'users';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,6 +24,15 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'userLastName',
+        'userFirstName',
+        'userMiddleName',
+        'userPassportSeries',
+        'userPassportNumber',
+        'userDonationCount',
+        'userIsHonoraryDonor',
+        'bloodGroupId',
+        'cityId'        
     ];
 
     /**
@@ -33,6 +44,19 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
+
+
+    public function bloodGroup()
+    {
+        return $this->belongsTo(BloodGroup::class);
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+
 
     /**
      * Get the attributes that should be cast.

@@ -37,7 +37,6 @@ function login() {
         })
         .then(function (res) {
             localStorage.setItem("access_token", res.data.access_token);
-            // console.log(res.data.access_token);
             // const data = {
             //     name: "blabla",
             //     token: res.data.access_token,

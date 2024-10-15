@@ -27,7 +27,7 @@
         <input
             @click.prevent="store"
             type="submit"
-            class="btn-btn-primary"
+            class="btn btn-primary"
             placeholder="Войти"
         />
         <div v-if="Error" class="text-danger">{{ Error }}</div>
@@ -53,8 +53,9 @@ function store() {
             password_confirmation: password_confirmation.value,
         })
         .then(function (res) {
-            console.log(res);
+            // console.log(res);
             localStorage.setItem("access_token", res.data.access_token);
+            // getAccessToken();
             router.push({ name: "user.personal" });
         })
         .catch((error) => {

@@ -13,7 +13,23 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+
+
+            $table->string('userLastName');
+            $table->string('userFirstName');
+            $table->string('userMiddleName');
+            $table->string('userPassportSeries');
+            $table->string('userPassportNumber');
+            $table->string('userDonationCount');
+            $table->boolean('userIsHonoraryDonor');
+
+            $table->unsignedBigInteger('bloodGroupId')->nullable(); 
+            $table->foreign('bloodGroupId')->references('id')->on('blood_groups')->onDelete('set null'); 
+
+            $table->unsignedBigInteger('cityId')->nullable(); 
+            $table->foreign('cityId')->references('id')->on('cities')->onDelete('set null');
+
+
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
@@ -42,6 +58,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+       
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
