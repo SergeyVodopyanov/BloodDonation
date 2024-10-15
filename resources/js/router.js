@@ -4,7 +4,13 @@ const router = createRouter({
     routes: [
         {
             path: "/",
-            redirect: { name: "user.login" }, // Перенаправление на user.login
+            redirect: { name: "station.index" },
+        },
+        {
+            path: "/stations",
+            component: () =>
+                import("./components/BloodDonationStations/Index.vue"),
+            name: "station.index",
         },
         {
             path: "/fruits",
@@ -36,24 +42,24 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
     const accessToken = localStorage.getItem("access_token");
-    //Если у пользователя нет токена и он пытается перейти на закрытый роут (не логин или регистрация), то его перекидывает на логин
-    if (!accessToken) {
-        if (
-            (to.name === "user.login" && !accessToken) ||
-            (to.name === "user.registration" && !accessToken)
-        ) {
-            return next();
-        } else {
-            return next({ name: "user.login" });
-        }
+    const publicRoutes = [
+        "station.index",
+        "fruit.index",
+        "user.login",
+        "user.registration",
+    ];
+
+    if (!accessToken && !publicRoutes.includes(to.name)) {
+        return next({ name: "user.login" });
     }
-    //Если у пользователя есть токен и он пытается перейти на роут логина, то его перекидывает на личную страницу
+
     if (
-        (to.name === "user.login" || to.name === "user.registration") &&
-        accessToken
+        accessToken &&
+        (to.name === "user.login" || to.name === "user.registration")
     ) {
-        return next({ name: "user.personal" });
+        return next({ name: "personal.index" });
     }
+
     next();
 });
 export default router;

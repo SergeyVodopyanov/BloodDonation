@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('blood_donation_stations', function (Blueprint $table) {
             $table->id();
+            $table->string('bloodDonationStationTitle');
             $table->string('bloodDonationStationAddress');
             $table->string('bloodDonationStationGeolocation');
 

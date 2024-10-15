@@ -1,5 +1,8 @@
 <template>
     <div>
+        <router-link :to="{ name: 'station.index' }"
+            >Пункты сдачи крови</router-link
+        >
         <router-link :to="{ name: 'fruit.index' }">Fruits</router-link>
         <router-link v-if="!accessToken" :to="{ name: 'user.login' }"
             >Login</router-link
