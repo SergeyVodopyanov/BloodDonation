@@ -1,21 +1,68 @@
 <template>
     <div>
-        <router-link :to="{ name: 'station.index' }"
-            >Пункты сдачи крови</router-link
-        >
-        <router-link :to="{ name: 'fruit.index' }">Fruits</router-link>
-        <router-link v-if="!accessToken" :to="{ name: 'user.login' }"
-            >Login</router-link
-        >
-        <router-link v-if="!accessToken" :to="{ name: 'user.registration' }"
-            >Registration</router-link
-        >
-        <router-link v-if="accessToken" :to="{ name: 'user.personal' }"
-            >Personal</router-link
-        >
-        <a v-if="accessToken" href="#" @click.prevent="logout">Logout</a>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <!-- Ссылка "Пункты сдачи крови" сдвинута правее -->
+                <div class="ms-auto me-auto">
+                    <router-link
+                        :to="{ name: 'station.index' }"
+                        class="navbar-brand"
+                        >Пункты сдачи крови</router-link
+                    >
+                </div>
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item" v-if="accessToken">
+                            <router-link
+                                :to="{ name: 'fruit.index' }"
+                                class="nav-link"
+                                >Fruits</router-link
+                            >
+                        </li>
+                        <li class="nav-item" v-if="!accessToken">
+                            <router-link
+                                :to="{ name: 'user.login' }"
+                                class="nav-link"
+                                >Авторизация</router-link
+                            >
+                        </li>
+                        <li class="nav-item" v-if="!accessToken">
+                            <router-link
+                                :to="{ name: 'user.registration' }"
+                                class="nav-link"
+                                >Регистрация</router-link
+                            >
+                        </li>
+                        <li class="nav-item" v-if="accessToken">
+                            <router-link
+                                :to="{ name: 'user.personal' }"
+                                class="nav-link"
+                                >Personal</router-link
+                            >
+                        </li>
+                        <li class="nav-item" v-if="accessToken">
+                            <a href="#" class="nav-link" @click.prevent="logout"
+                                >Выход</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-        <p>Access Token: {{ accessToken }}</p>
+        <!-- <p>Access Token: {{ accessToken }}</p>
+        <p v-if="user">Welcome, {{ user.userFirstName }}</p> -->
 
         <router-view></router-view>
     </div>
@@ -32,7 +79,11 @@ const authStore = useAuthStore();
 // let accessToken = ref(null);
 
 const accessToken = computed(() => authStore.accessToken);
+const user = computed(() => authStore.user);
 
+if (accessToken.value) {
+    authStore.fetchUser();
+}
 // onMounted(() => {
 //     getAccessToken();
 // });

@@ -32,6 +32,7 @@ Route::group([
         Route::group(['prefix' => 'fruits'], function () {
             Route::get('/', App\Http\Controllers\Fruit\IndexController::class);
         });
+        Route::get('user', [AuthController::class, 'getUser']);
     });
 });
 

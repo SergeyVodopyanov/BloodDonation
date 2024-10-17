@@ -1,80 +1,82 @@
 <template>
-    <div class="w-25">
-        <input
-            v-model="userLastName"
-            type="text"
-            class="form-control bt-3 mb-3"
-            placeholder="Фамилия"
-        />
-        <input
-            v-model="userFirstName"
-            type="text"
-            class="form-control bt-3 mb-3"
-            placeholder="Имя"
-        />
-        <input
-            v-model="userMiddleName"
-            type="text"
-            class="form-control bt-3 mb-3"
-            placeholder="Отчество"
-        />
-        <input
-            v-model="userPassportSeries"
-            type="text"
-            class="form-control mb-3"
-            placeholder="Серия паспорта"
-        />
-        <input
-            v-model="userPassportNumber"
-            type="text"
-            class="form-control mb-3"
-            placeholder="Номер паспорта"
-        />
-        <select v-model="cityId" class="form-control mb-3" placeholder="Город">
-            <option value="" disabled>Выберите город</option>
-            <option v-for="city in cities" :key="city.id" :value="city.id">
-                {{ city.cityTitle }}
-            </option>
-        </select>
-        <select
-            v-model="bloodGroupId"
-            class="form-control mb-3"
-            placeholder="Группа крови"
-        >
-            <option value="" disabled>Выберите группу крови</option>
-            <option
-                v-for="bloodGroup in bloodGroups"
-                :key="bloodGroup.id"
-                :value="bloodGroup.id"
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="w-25">
+            <input
+                v-model="userLastName"
+                type="text"
+                class="form-control bt-3 mb-3"
+                placeholder="Фамилия"
+            />
+            <input
+                v-model="userFirstName"
+                type="text"
+                class="form-control bt-3 mb-3"
+                placeholder="Имя"
+            />
+            <input
+                v-model="userMiddleName"
+                type="text"
+                class="form-control bt-3 mb-3"
+                placeholder="Отчество"
+            />
+            <input
+                v-model="userPassportSeries"
+                type="text"
+                class="form-control mb-3"
+                placeholder="Серия паспорта"
+            />
+            <input
+                v-model="userPassportNumber"
+                type="text"
+                class="form-control mb-3"
+                placeholder="Номер паспорта"
+            />
+            <select v-model="cityId" class="form-control mb-3">
+                <option value="">Выберите город</option>
+                <option v-for="city in cities" :key="city.id" :value="city.id">
+                    {{ city.cityTitle }}
+                </option>
+            </select>
+            <select
+                v-model="bloodGroupId"
+                class="form-control mb-3"
+                placeholder="Группа крови"
             >
-                {{ bloodGroup.bloodGroupTitle }}
-            </option>
-        </select>
-        <input
-            v-model="email"
-            type="email"
-            class="form-control mb-3"
-            placeholder="Электронная почта"
-        />
-        <input
-            v-model="password"
-            type="password"
-            class="form-control mb-3"
-            placeholder="Пароль"
-        />
-        <input
-            v-model="password_confirmation"
-            type="password"
-            class="form-control mb-3"
-            placeholder="Подтвердите пароль"
-        />
-        <input
-            @click.prevent="store"
-            type="submit"
-            class="btn btn-primary"
-            placeholder="Войти"
-        />
-        <div v-if="Error" class="text-danger">{{ Error }}</div>
+                <option value="" disabled>Выберите группу крови</option>
+                <option
+                    v-for="bloodGroup in bloodGroups"
+                    :key="bloodGroup.id"
+                    :value="bloodGroup.id"
+                >
+                    {{ bloodGroup.bloodGroupTitle }}
+                </option>
+            </select>
+            <input
+                v-model="email"
+                type="email"
+                class="form-control mb-3"
+                placeholder="Электронная почта"
+            />
+            <input
+                v-model="password"
+                type="password"
+                class="form-control mb-3"
+                placeholder="Пароль"
+            />
+            <input
+                v-model="password_confirmation"
+                type="password"
+                class="form-control mb-3"
+                placeholder="Подтвердите пароль"
+            />
+            <input
+                @click.prevent="store"
+                type="submit"
+                class="btn btn-primary"
+                placeholder="Войти"
+            />
+            <div v-if="Error" class="text-danger">{{ Error }}</div>
+        </div>
     </div>
 </template>
 <script setup>

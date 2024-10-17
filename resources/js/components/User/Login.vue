@@ -1,25 +1,27 @@
 <template>
-    <div class="w-25">
-        <input
-            v-model="email"
-            type="email"
-            class="form-control mt-3 mb-3"
-            placeholder="Email"
-        />
-        <input
-            v-model="password"
-            type="password"
-            class="form-control mb-3"
-            placeholder="Password"
-        />
-        <input
-            @click.prevent="login"
-            type="submit"
-            class="btn btn-primary"
-            placeholder="Войти"
-        />
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="w-25">
+            <input
+                v-model="email"
+                type="email"
+                class="form-control mt-3 mb-3"
+                placeholder="Email"
+            />
+            <input
+                v-model="password"
+                type="password"
+                class="form-control mb-3"
+                placeholder="Password"
+            />
+            <input
+                @click.prevent="login"
+                type="submit"
+                class="btn btn-primary"
+                value="Войти"
+            />
+        </div>
     </div>
-    <div v-if="Error" class="text-danger">{{ Error }}</div>
+    <div v-if="Error" class="text-danger text-center">{{ Error }}</div>
 </template>
 
 <script setup>

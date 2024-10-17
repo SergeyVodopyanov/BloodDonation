@@ -13,6 +13,11 @@ class AuthController extends Controller
     {
         $this->middleware('auth:api', ['except' => ['login', 'refresh']]);
     }
+
+    public function getUser(Request $request)
+    {
+        return response()->json($request->user());
+    }
     
     /**
      * Get a JWT token via given credentials.
