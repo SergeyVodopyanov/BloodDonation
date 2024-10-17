@@ -13,6 +13,12 @@ const router = createRouter({
             name: "station.index",
         },
         {
+            path: "/stations/:id",
+            component: () =>
+                import("./components/BloodDonationStations/Show.vue"),
+            name: "station.show",
+        },
+        {
             path: "/fruits",
             component: () => import("./components/Fruit/Index.vue"),
             name: "fruit.index",

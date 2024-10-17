@@ -38,6 +38,7 @@ Route::group([
 
 Route::group(['prefix' => 'stations'], function () {
     Route::get('/', App\Http\Controllers\Station\IndexController::class);
+    Route::get('/{id}', App\Http\Controllers\Station\ShowController::class);
 });
 
 

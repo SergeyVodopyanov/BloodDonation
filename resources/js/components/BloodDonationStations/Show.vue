@@ -1,23 +1,18 @@
 <template>
-    <div id="map"></div>
-    <div>
-        <div class="mb-3">
-            <label for="cityFilter" class="form-label">ВЫберите город</label>
-            <select
-                v-model="selectedCity"
-                class="form-select"
-                id="cityFilter"
-                @change="filterStations"
-            >
-                <option value="">Все города</option>
-                <option
-                    v-for="city in cities"
-                    :key="city.id"
-                    :value="city.cityTitle"
-                >
-                    {{ city.cityTitle }}
-                </option>
-            </select>
+    <div v-if="isStationLoaded">
+        <div id="map"></div>
+        <div>
+            <h1>Информация о пункте сдачи крови</h1>
+            <p>Название: {{ station.bloodDonationStationTitle }}</p>
+            <p>
+                Город:
+                {{ station.city ? station.city.cityTitle : "Неизвестно" }}
+            </p>
+            <p>Адрес: {{ station.bloodDonationStationAddress }}</p>
+            <p>
+                Геолокация: {{ station.bloodDonationStationLatitude }}
+                {{ station.bloodDonationStationLongitude }}
+            </p>
         </div>
         <table class="table">
             <thead>
@@ -38,12 +33,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr
-                    v-for="station in filteredStations"
-                    :key="station.id"
-                    @click="goToStationShow(station.id)"
-                    style="cursor: pointer"
-                >
+                <tr>
                     <th scope="row">{{ station.id }}</th>
                     <td>{{ station.bloodDonationStationTitle }}</td>
                     <td>{{ station.city.cityTitle }}</td>
@@ -109,43 +99,24 @@
 
 <script setup>
 import axios from "axios";
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import api from "../../api";
 
-let router = useRouter();
+const route = useRoute();
+const station = ref({});
 
-let stations = ref(null);
-let cities = ref([]);
-let selectedCity = ref("");
-let isStationsLoaded = ref(false);
+let isStationLoaded = ref(false);
 
-getStations(api);
-getCities(api);
-
-function getStations(api) {
-    api.get("/api/stations", {
-        // headers: {
-        //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        // },
-    }).then((res) => {
-        stations.value = res.data.data;
-        console.log(stations.value);
-        isStationsLoaded.value = true;
-        init(); // Вызываем init только после загрузки данных
+onMounted(() => {
+    const stationId = route.params.id;
+    api.get(`/api/stations/${stationId}`).then((res) => {
+        station.value = res.data.data;
+        console.log(station.value);
+        isStationLoaded.value = true;
+        init();
     });
-}
-
-function getCities(api) {
-    api.get("/api/cities", {
-        // headers: {
-        //     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        // },
-    }).then((res) => {
-        cities.value = res.data.data;
-        console.log(cities.value);
-    });
-}
+});
 
 function getBloodGroupStatus(station, bloodGroupTitle) {
     const bloodGroup = station.bloodGroups.find(
@@ -160,51 +131,39 @@ function getBloodGroupStatus(station, bloodGroupTitle) {
     } else return "Неизвестно";
 }
 
-const filteredStations = computed(() => {
-    if (!stations.value) return [];
-    if (!selectedCity.value) return stations.value;
-    return stations.value.filter(
-        (station) => station.city.cityTitle === selectedCity.value
-    );
-});
-
-// function filterStations() {
-//     // Эта функция вызывается при изменении выбранного города
-//     // Вычисление filteredStations будет автоматически обновлено
-// }
-
-function goToStationShow(stationId) {
-    router.push({
-        name: "station.show",
-        params: { id: stationId },
-    });
-}
-
 function init() {
-    if (!isStationsLoaded.value) return; // Проверяем, загружены ли данные
-
+    if (!isStationLoaded.value) return; // Проверяем, загружены ли данные
     ymaps.ready(() => {
         var myMap = new ymaps.Map("map", {
             center: [55.76, 37.64], // Координаты центра карты (Москва)
             zoom: 10, // Масштаб карты
         });
-
         // Массив с данными о пунктах сдачи крови
         let points = [];
-        for (let i = 0; i < stations.value.length; i++) {
-            let station = stations.value[i];
-            console.log(station);
-            let newPoint = {
-                coordinates: [
-                    station.bloodDonationStationLatitude,
-                    station.bloodDonationStationLongitude,
-                ],
-                title: station.bloodDonationStationTitle,
-                description: station.bloodDonationStationAddress,
-            };
-            points.push(newPoint);
-        }
-
+        // for (let i = 0; i < stations.value.length; i++) {
+        //     let station = stations.value[i];
+        //     console.log(station.value);
+        //     let newPoint = {
+        //         coordinates: [
+        //             station.value.bloodDonationStationLatitude,
+        //             station.value.bloodDonationStationLongitude,
+        //         ],
+        //         title: station.value.bloodDonationStationTitle,
+        //         description: station.value.bloodDonationStationAddress,
+        //     };
+        //     points.push(newPoint);
+        // }
+        // let station = stations.value[i];
+        console.log(station.value);
+        let newPoint = {
+            coordinates: [
+                station.value.bloodDonationStationLatitude,
+                station.value.bloodDonationStationLongitude,
+            ],
+            title: station.value.bloodDonationStationTitle,
+            description: station.value.bloodDonationStationAddress,
+        };
+        points.push(newPoint);
         // Добавляем метки на карту
         points.forEach(function (point) {
             var placemark = new ymaps.Placemark(point.coordinates, {
