@@ -3,7 +3,7 @@ namespace App\Http\Controllers\BloodGroup;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\BloodGroup;
-use App\Http\Resources\BloodGroupResource;
+use App\Http\Resources\BloodGroup\BloodGroupResource;
 class IndexController extends Controller
 {
     public function __invoke(){

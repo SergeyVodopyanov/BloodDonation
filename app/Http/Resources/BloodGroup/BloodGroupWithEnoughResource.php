@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\BloodGroup;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BloodGroupResource extends JsonResource
+class BloodGroupWithEnoughResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

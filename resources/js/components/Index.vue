@@ -22,15 +22,20 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import api from "../api";
 import router from "../router";
+import { useAuthStore } from "../stores/auth";
 
-let accessToken = ref(null);
+const authStore = useAuthStore();
 
-onMounted(() => {
-    getAccessToken();
-});
+// let accessToken = ref(null);
+
+const accessToken = computed(() => authStore.accessToken);
+
+// onMounted(() => {
+//     getAccessToken();
+// });
 
 // Следим за изменениями токена
 watch(accessToken, (newVal) => {
@@ -39,14 +44,21 @@ watch(accessToken, (newVal) => {
     console.log("Updated access token:", token);
 });
 
+// function logout() {
+//     api.post("/api/auth/logout").then(() => {
+//         localStorage.removeItem("access_token");
+//         accessToken.value = null;
+//     });
+// }
+
 function logout() {
     api.post("/api/auth/logout").then(() => {
-        localStorage.removeItem("access_token");
-        accessToken.value = null;
+        authStore.logout();
+        router.push({ name: "user.login" });
     });
 }
 
-function getAccessToken() {
-    accessToken.value = localStorage.getItem("access_token");
-}
+// function getAccessToken() {
+//     accessToken.value = localStorage.getItem("access_token");
+// }
 </script>

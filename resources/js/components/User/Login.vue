@@ -26,6 +26,10 @@
 import { ref } from "vue";
 import axios from "axios";
 import router from "../../router";
+import { useAuthStore } from "../../stores/auth";
+
+const authStore = useAuthStore();
+
 let email = ref("");
 let password = ref("");
 let Error = ref(null);
@@ -36,12 +40,9 @@ function login() {
             password: password.value,
         })
         .then(function (res) {
-            localStorage.setItem("access_token", res.data.access_token);
-            // const data = {
-            //     name: "blabla",
-            //     token: res.data.access_token,
-            // };
-            // localStorage.setItem("some_data", JSON.stringify(data));
+            // localStorage.setItem("access_token", res.data.access_token);
+            // router.push({ name: "user.personal" });
+            authStore.login(res.data.access_token);
             router.push({ name: "user.personal" });
         })
         .catch((error) => {

@@ -81,6 +81,9 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import router from "../../router";
+import { useAuthStore } from "../../stores/auth";
+
+const authStore = useAuthStore();
 
 //
 let userLastName = ref(null);
@@ -147,9 +150,9 @@ function store() {
             bloodGroupId: bloodGroupId.value,
         })
         .then(function (res) {
-            // console.log(res);
-            localStorage.setItem("access_token", res.data.access_token);
-            // getAccessToken();
+            // localStorage.setItem("access_token", res.data.access_token);
+            // router.push({ name: "user.personal" });
+            authStore.login(res.data.access_token);
             router.push({ name: "user.personal" });
         })
         .catch((error) => {
