@@ -28,4 +28,9 @@ class bloodDonationStation extends Model
     {
         return $this->belongsToMany(BloodGroup::class, 'blood_donation_stations_blood_groups', 'bloodDonationStationId', 'bloodGroupId')->withPivot('bloodInStationEnough');;
     }
+
+    public function donationSessions()
+    {
+        return $this->hasMany(DonationSession::class, 'bloodDonationStationId');
+    }
 }

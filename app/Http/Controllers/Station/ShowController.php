@@ -8,7 +8,7 @@ use App\Http\Resources\BloodDonationStationResource;
 class ShowController extends Controller
 {
     public function __invoke($id){
-        $bloodDonationStation = BloodDonationStation::with(['city', 'bloodGroups'])->findOrFail($id);
+        $bloodDonationStation = BloodDonationStation::with(['city', 'bloodGroups', 'donationSessions'])->findOrFail($id);
         return BloodDonationStationResource::make($bloodDonationStation);
 
 
