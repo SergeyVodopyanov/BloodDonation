@@ -1,4 +1,5 @@
 <template>
+    <div id="map"></div>
     <div>
         <div class="mb-3">
             <label for="cityFilter" class="form-label">Фильтр по городу:</label>
@@ -42,7 +43,13 @@
                     <td>{{ station.bloodDonationStationTitle }}</td>
                     <td>{{ station.city.cityTitle }}</td>
                     <td>{{ station.bloodDonationStationAddress }}</td>
-                    <td>{{ station.bloodDonationStationGeolocation }}</td>
+                    <td>
+                        {{
+                            station.bloodDonationStationLatitude +
+                            " " +
+                            station.bloodDonationStationLongitude
+                        }}
+                    </td>
                     <td>
                         {{
                             getBloodGroupStatus(station, "Первая положительная")
@@ -106,6 +113,7 @@ let router = useRouter();
 let stations = ref(null);
 let cities = ref([]);
 let selectedCity = ref("");
+let isStationsLoaded = ref(false);
 
 getStations(api);
 getCities(api);
@@ -118,6 +126,8 @@ function getStations(api) {
     }).then((res) => {
         stations.value = res.data.data;
         console.log(stations.value);
+        isStationsLoaded.value = true;
+        init(); // Вызываем init только после загрузки данных
     });
 }
 
@@ -157,4 +167,47 @@ function filterStations() {
     // Эта функция вызывается при изменении выбранного города
     // Вычисление filteredStations будет автоматически обновлено
 }
+
+function init() {
+    if (!isStationsLoaded.value) return; // Проверяем, загружены ли данные
+
+    ymaps.ready(() => {
+        var myMap = new ymaps.Map("map", {
+            center: [55.76, 37.64], // Координаты центра карты (Москва)
+            zoom: 10, // Масштаб карты
+        });
+
+        // Массив с данными о пунктах сдачи крови
+        let points = [];
+        for (let i = 0; i < stations.value.length; i++) {
+            let station = stations.value[i];
+            console.log(station);
+            let newPoint = {
+                coordinates: [
+                    station.bloodDonationStationLatitude,
+                    station.bloodDonationStationLongitude,
+                ],
+                title: station.bloodDonationStationTitle,
+                description: station.bloodDonationStationAddress,
+            };
+            points.push(newPoint);
+        }
+
+        // Добавляем метки на карту
+        points.forEach(function (point) {
+            var placemark = new ymaps.Placemark(point.coordinates, {
+                balloonContentHeader: point.title,
+                balloonContentBody: point.description,
+            });
+            myMap.geoObjects.add(placemark);
+        });
+    });
+}
 </script>
+
+<style>
+#map {
+    width: 100%;
+    height: 500px;
+}
+</style>

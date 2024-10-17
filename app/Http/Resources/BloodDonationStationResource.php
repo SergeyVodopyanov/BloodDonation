@@ -18,8 +18,9 @@ class BloodDonationStationResource extends JsonResource
         return [
             'id' => $this->id,
             'bloodDonationStationTitle' => $this->bloodDonationStationTitle,
+            'bloodDonationStationLatitude' => $this->bloodDonationStationLatitude,
             'bloodDonationStationAddress' => $this->bloodDonationStationAddress,
-            'bloodDonationStationGeolocation' => $this->bloodDonationStationGeolocation,
+            'bloodDonationStationLongitude' => $this->bloodDonationStationLongitude,
             'city' => new CityResource($this->city),
             'bloodGroups' => BloodGroupWithEnoughResource::collection($this->bloodGroups),
         ];

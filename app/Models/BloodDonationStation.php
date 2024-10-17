@@ -13,7 +13,8 @@ class bloodDonationStation extends Model
 
     protected $fillable = [
         'bloodDonationStationAddress',
-        'bloodDonationStationGeolocation',
+        'bloodDonationStationLatitude',
+        'bloodDonationStationLongitude',
         'cityId'
     ];
 
