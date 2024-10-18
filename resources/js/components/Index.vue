@@ -2,7 +2,6 @@
     <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <!-- Ссылка "Пункты сдачи крови" сдвинута правее -->
                 <div class="ms-auto me-auto">
                     <router-link
                         :to="{ name: 'station.index' }"
@@ -61,9 +60,6 @@
             </div>
         </nav>
 
-        <!-- <p>Access Token: {{ accessToken }}</p>
-        <p v-if="user">Welcome, {{ user.userFirstName }}</p> -->
-
         <router-view></router-view>
     </div>
 </template>
@@ -92,7 +88,7 @@ if (accessToken.value) {
 watch(accessToken, (newVal) => {
     const token = localStorage.getItem("access_token");
     accessToken.value = token;
-    console.log("Updated access token:", token);
+    // console.log("Updated access token:", token);
 });
 
 // function logout() {

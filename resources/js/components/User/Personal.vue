@@ -89,11 +89,13 @@ const route = useRoute();
 
 // let person = ref({});
 
-const user = computed(() => authStore.user);
+let user = computed(() => authStore.user);
 let userCity = ref(null);
 let userBloodGroup = ref(null);
 let cities = ref(null);
 let bloodGroups = ref(null);
+
+console.log(user.value); // Выведет объект пользователя
 
 onMounted(() => {
     axios
@@ -124,22 +126,4 @@ onMounted(() => {
             console.error(error);
         });
 });
-
-// getUser();
-
-// function getUser() {
-//     axios
-//         .get("/api/users/me", {
-//             headers: {
-//                 Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-//             },
-//         })
-//         .then((res) => {
-//             person.value = res.data.data;
-//             console.log(person.value);
-//         })
-//         .catch((error) => {
-//             console.error(error);
-//         });
-// }
 </script>

@@ -12,6 +12,7 @@ class BloodDonation extends Model
     protected $table = 'blood_donations';
 
     protected $fillable = [
+        'id',
         'userId',
         'donationSessionId'
     ];

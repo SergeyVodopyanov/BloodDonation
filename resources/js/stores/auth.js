@@ -30,7 +30,7 @@ export const useAuthStore = defineStore("auth", {
                     },
                 });
                 this.user = response.data; // Сохраняем информацию о пользователе
-                console.log(this.user);
+                // console.log(this.user);
             } catch (error) {
                 console.error("Failed to fetch user:", error);
             }

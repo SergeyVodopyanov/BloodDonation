@@ -94,16 +94,27 @@
                 </tr>
             </tbody>
         </table>
+        <button @click="addBloodDonation" class="btn btn-primary">
+            Добавить запись о сдаче крови
+        </button>
     </div>
 </template>
 
 <script setup>
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import api from "../../api";
+import { useAuthStore } from "../../stores/auth";
 
 const route = useRoute();
+const authStore = useAuthStore();
+
+let user = computed(() => authStore.user);
+
+console.log(user.value); // Выведет объект пользователя
+// console.log(user.value.id); // Должен вывести ID пользователя
+
 const station = ref({});
 
 let isStationLoaded = ref(false);
@@ -112,11 +123,40 @@ onMounted(() => {
     const stationId = route.params.id;
     api.get(`/api/stations/${stationId}`).then((res) => {
         station.value = res.data.data;
-        console.log(station.value);
+        // console.log(station.value);
         isStationLoaded.value = true;
         init();
     });
 });
+function addBloodDonation() {
+    // console.log(station.value.donationSessions.length);
+    if (!user.value) {
+        console.error(
+            "Пользователь не авторизован или данные о пользователе не загружены."
+        );
+        return;
+    }
+
+    const donationSessionId = Math.floor(
+        Math.random() * station.value.donationSessions.length
+    );
+    const userId = user.value.id;
+
+    console.log("donationSessionId:", donationSessionId);
+    console.log("userId:", userId);
+
+    axios
+        .post("/api/bloodDonations", {
+            donationSessionId: donationSessionId,
+            userId: userId,
+        })
+        .then((response) => {
+            console.log(response.data);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+}
 
 function getBloodGroupStatus(station, bloodGroupTitle) {
     const bloodGroup = station.bloodGroups.find(
@@ -132,29 +172,16 @@ function getBloodGroupStatus(station, bloodGroupTitle) {
 }
 
 function init() {
-    if (!isStationLoaded.value) return; // Проверяем, загружены ли данные
+    if (!isStationLoaded.value) return;
     ymaps.ready(() => {
         var myMap = new ymaps.Map("map", {
-            center: [55.76, 37.64], // Координаты центра карты (Москва)
-            zoom: 10, // Масштаб карты
+            center: [55.76, 37.64],
+            zoom: 10,
         });
-        // Массив с данными о пунктах сдачи крови
+
         let points = [];
-        // for (let i = 0; i < stations.value.length; i++) {
-        //     let station = stations.value[i];
-        //     console.log(station.value);
-        //     let newPoint = {
-        //         coordinates: [
-        //             station.value.bloodDonationStationLatitude,
-        //             station.value.bloodDonationStationLongitude,
-        //         ],
-        //         title: station.value.bloodDonationStationTitle,
-        //         description: station.value.bloodDonationStationAddress,
-        //     };
-        //     points.push(newPoint);
-        // }
-        // let station = stations.value[i];
-        console.log(station.value);
+
+        // console.log(station.value);
         let newPoint = {
             coordinates: [
                 station.value.bloodDonationStationLatitude,
@@ -164,7 +191,7 @@ function init() {
             description: station.value.bloodDonationStationAddress,
         };
         points.push(newPoint);
-        // Добавляем метки на карту
+
         points.forEach(function (point) {
             var placemark = new ymaps.Placemark(point.coordinates, {
                 balloonContentHeader: point.title,
