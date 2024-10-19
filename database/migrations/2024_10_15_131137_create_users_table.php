@@ -13,21 +13,13 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-
-
-            $table->string('userLastName');
-            $table->string('userFirstName');
-            $table->string('userMiddleName');
-            $table->string('userPassportSeries');
-            $table->string('userPassportNumber');
-            $table->string('userDonationCount');
-            $table->boolean('userIsHonoraryDonor');
-
-            $table->unsignedBigInteger('bloodGroupId')->nullable(); 
-            $table->foreign('bloodGroupId')->references('id')->on('blood_groups')->onDelete('set null'); 
-
-            $table->unsignedBigInteger('cityId')->nullable(); 
-            $table->foreign('cityId')->references('id')->on('cities')->onDelete('set null');
+            $table->string('last_name');
+            $table->string('first_name');
+            $table->string('middle_name');
+            $table->string('passport_series');
+            $table->string('passport_number');
+            $table->string('blood_group');
+            $table->string('city');
 
 
             $table->string('email')->unique();
