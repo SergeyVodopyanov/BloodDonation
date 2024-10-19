@@ -11,6 +11,7 @@ class Point extends Model
     protected $table = 'points';
 
     protected $fillable = [
+        'title',
         'city',
         'address',
         'geolocation',

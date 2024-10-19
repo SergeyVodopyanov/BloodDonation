@@ -18,6 +18,7 @@ class PointResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'title' => $this->title,
             'city' => $this->city,
             'address' => $this->address,
             'geolocation' => $this->geolocation,

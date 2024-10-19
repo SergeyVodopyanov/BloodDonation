@@ -4,19 +4,17 @@ const router = createRouter({
     routes: [
         {
             path: "/",
-            redirect: { name: "station.index" },
+            redirect: { name: "point.index" },
         },
         {
-            path: "/stations",
-            component: () =>
-                import("./components/BloodDonationStations/Index.vue"),
-            name: "station.index",
+            path: "/points",
+            component: () => import("./components/Point/Index.vue"),
+            name: "point.index",
         },
         {
-            path: "/stations/:id",
-            component: () =>
-                import("./components/BloodDonationStations/Show.vue"),
-            name: "station.show",
+            path: "/points/:id",
+            component: () => import("./components/Point/Show.vue"),
+            name: "point.show",
         },
         {
             path: "/fruits",
@@ -49,7 +47,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const accessToken = localStorage.getItem("access_token");
     const publicRoutes = [
-        "station.index",
+        "point.index",
         "fruit.index",
         "user.login",
         "user.registration",

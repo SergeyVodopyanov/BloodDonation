@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('points', function (Blueprint $table) {
             $table->id();
+            $table->string('title')->default('Поликлиника ' . rand(1, 100));
             $table->string('city');
             $table->string('address');
             $table->string('geolocation');

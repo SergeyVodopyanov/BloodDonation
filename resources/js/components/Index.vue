@@ -4,7 +4,7 @@
             <div class="container-fluid">
                 <div class="ms-auto me-auto">
                     <router-link
-                        :to="{ name: 'station.index' }"
+                        :to="{ name: 'point.index' }"
                         class="navbar-brand"
                         >Пункты сдачи крови</router-link
                     >
@@ -22,13 +22,6 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item" v-if="accessToken">
-                            <router-link
-                                :to="{ name: 'fruit.index' }"
-                                class="nav-link"
-                                >Fruits</router-link
-                            >
-                        </li>
                         <li class="nav-item" v-if="!accessToken">
                             <router-link
                                 :to="{ name: 'user.login' }"
@@ -47,7 +40,7 @@
                             <router-link
                                 :to="{ name: 'user.personal' }"
                                 class="nav-link"
-                                >Personal</router-link
+                                >Личный кабинет</router-link
                             >
                         </li>
                         <li class="nav-item" v-if="accessToken">
