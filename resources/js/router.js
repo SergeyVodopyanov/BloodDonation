@@ -48,6 +48,7 @@ router.beforeEach((to, from, next) => {
     const accessToken = localStorage.getItem("access_token");
     const publicRoutes = [
         "point.index",
+        "point.show",
         "fruit.index",
         "user.login",
         "user.registration",

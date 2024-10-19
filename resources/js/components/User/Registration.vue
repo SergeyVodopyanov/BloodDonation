@@ -2,53 +2,52 @@
     <div class="d-flex justify-content-center align-items-center vh-100">
         <div class="w-25">
             <input
-                v-model="userLastName"
+                v-model="last_name"
                 type="text"
                 class="form-control bt-3 mb-3"
                 placeholder="Фамилия"
             />
             <input
-                v-model="userFirstName"
+                v-model="first_name"
                 type="text"
                 class="form-control bt-3 mb-3"
                 placeholder="Имя"
             />
             <input
-                v-model="userMiddleName"
+                v-model="middle_name"
                 type="text"
                 class="form-control bt-3 mb-3"
                 placeholder="Отчество"
             />
             <input
-                v-model="userPassportSeries"
+                v-model="passport_series"
                 type="text"
                 class="form-control mb-3"
                 placeholder="Серия паспорта"
             />
             <input
-                v-model="userPassportNumber"
+                v-model="passport_number"
                 type="text"
                 class="form-control mb-3"
                 placeholder="Номер паспорта"
             />
-            <select v-model="cityId" class="form-control mb-3">
-                <option value="">Выберите город</option>
-                <option v-for="city in cities" :key="city.id" :value="city.id">
-                    {{ city.cityTitle }}
-                </option>
-            </select>
+            <input
+                v-model="city"
+                type="text"
+                class="form-control mb-3"
+                placeholder="Город"
+            />
             <select
-                v-model="bloodGroupId"
+                v-model="blood_group"
                 class="form-control mb-3"
                 placeholder="Группа крови"
             >
                 <option value="" disabled>Выберите группу крови</option>
-                <option
-                    v-for="bloodGroup in bloodGroups"
-                    :key="bloodGroup.id"
-                    :value="bloodGroup.id"
-                >
-                    {{ bloodGroup.bloodGroupTitle }}
+                <option value="Первая группа крови">Первая группа крови</option>
+                <option value="Вторая группа крови">Вторая группа крови</option>
+                <option value="Третья группа крови">Третья группа крови</option>
+                <option value="Четвёртая группа крови">
+                    Четвёртая группа крови
                 </option>
             </select>
             <input
@@ -88,74 +87,58 @@ import { useAuthStore } from "../../stores/auth";
 const authStore = useAuthStore();
 
 //
-let userLastName = ref(null);
-let userFirstName = ref(null);
-let userMiddleName = ref(null);
-let userPassportSeries = ref(null);
-let userPassportNumber = ref(null);
+let last_name = ref(null);
+let first_name = ref(null);
+let middle_name = ref(null);
+let passport_series = ref(null);
+let passport_number = ref(null);
 let email = ref(null);
 let password = ref(null);
 let password_confirmation = ref(null);
-
-let cities = ref([]);
-let bloodGroups = ref([]);
-
-let cityId = ref(null);
-let bloodGroupId = ref(null);
+let city = ref(null);
+let blood_group = ref(null);
 
 let Error = ref(null);
-
-onMounted(() => {
-    axios
-        .get("/api/cities")
-        .then((response) => {
-            cities.value = response.data.data;
-            console.log(cities.value);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
-
-    axios
-        .get("/api/blood_groups")
-        .then((response) => {
-            bloodGroups.value = response.data.data;
-            console.log(bloodGroups.value);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
-});
 
 function store() {
     console.log(email.value);
     console.log(password.value);
     console.log(password_confirmation.value);
-    console.log(userLastName.value);
-    console.log(userFirstName.value);
-    console.log(userMiddleName.value);
-    console.log(userPassportSeries.value);
-    console.log(userPassportNumber.value);
-    console.log(cityId.value);
-    console.log(bloodGroupId.value);
+    console.log(last_name.value);
+    console.log(first_name.value);
+    console.log(middle_name.value);
+    console.log(passport_series.value);
+    console.log(passport_number.value);
+    console.log(city.value);
+    console.log(blood_group.value);
     axios
         .post("/api/users", {
             email: email.value,
             password: password.value,
             password_confirmation: password_confirmation.value,
-            userLastName: userLastName.value,
-            userFirstName: userFirstName.value,
-            userMiddleName: userMiddleName.value,
-            userPassportSeries: userPassportSeries.value,
-            userPassportNumber: userPassportNumber.value,
-            cityId: cityId.value,
-            bloodGroupId: bloodGroupId.value,
+            last_name: last_name.value,
+            first_name: first_name.value,
+            middle_name: middle_name.value,
+            passport_series: passport_series.value,
+            passport_number: passport_number.value,
+            city: city.value,
+            blood_group: blood_group.value,
         })
         .then(function (res) {
             // localStorage.setItem("access_token", res.data.access_token);
             // router.push({ name: "user.personal" });
             authStore.login(res.data.access_token);
             router.push({ name: "user.personal" });
+            console.log(email.value);
+            console.log(password.value);
+            console.log(password_confirmation.value);
+            console.log(last_name.value);
+            console.log(first_name.value);
+            console.log(middle_name.value);
+            console.log(passport_series.value);
+            console.log(passport_number.value);
+            console.log(city.value);
+            console.log(blood_group.value);
         })
         .catch((error) => {
             if (

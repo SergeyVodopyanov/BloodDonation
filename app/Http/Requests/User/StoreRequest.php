@@ -21,13 +21,13 @@ class StoreRequest extends FormRequest
             'email' => 'required|email',
             'password' => 'required|string|confirmed',
             'password_confirmation' => 'required|string',
-            'userLastName' => 'required|string',
-            'userFirstName' => 'required|string',
-            'userMiddleName' => 'nullable|string',
-            'userPassportSeries' => 'required|string|unique:users',
-            'userPassportNumber' => 'required|string|unique:users',
-            'cityId' => 'required|integer',
-            'bloodGroupId' => 'required|integer',
+            'last_name' => 'required|string',
+            'first_name' => 'required|string',
+            'middle_name' => 'nullable|string',
+            'passport_series' => 'required|string|unique:users',
+            'passport_number' => 'required|string|unique:users',
+            'city' => 'required|string',
+            'blood_group' => 'required|string',
         ];
     }
 }
