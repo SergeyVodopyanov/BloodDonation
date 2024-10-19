@@ -21,18 +21,15 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
         'email',
         'password',
-        'userLastName',
-        'userFirstName',
-        'userMiddleName',
-        'userPassportSeries',
-        'userPassportNumber',
-        'userDonationCount',
-        'userIsHonoraryDonor',
-        'bloodGroupId',
-        'cityId'        
+        'last_name',
+        'first_name',
+        'middle_name',
+        'passport_series',
+        'passport_number',
+        'blood_group',
+        'city',
     ];
 
     /**
@@ -44,18 +41,6 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
-
-
-    public function bloodGroup()
-    {
-        return $this->belongsTo(BloodGroup::class);
-    }
-
-    public function city()
-    {
-        return $this->belongsTo(City::class);
-    }
-
 
 
     /**
