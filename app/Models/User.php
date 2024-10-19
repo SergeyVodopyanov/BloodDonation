@@ -32,6 +32,11 @@ class User extends Authenticatable implements JWTSubject
         'city',
     ];
 
+    public function donations()
+    {
+        return $this->hasMany(Donation::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

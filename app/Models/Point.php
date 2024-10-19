@@ -18,6 +18,11 @@ class Point extends Model
         'second_blood_group_count',
         'third_blood_group_count',
         'fourth_blood_group_count',
+        'enough_count'
     ];
      
+    public function donations()
+    {
+        return $this->hasMany(Donation::class);
+    }
 }

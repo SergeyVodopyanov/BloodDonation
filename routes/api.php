@@ -13,13 +13,13 @@ Route::group(['prefix' => 'users'], function () {
 Route::group(['prefix' => 'bloodDonations'], function () {
     Route::post('/', App\Http\Controllers\BloodDonation\StoreController::class);
 });
-Route::group(['prefix' => 'cities'], function () {
-        Route::get('/', App\Http\Controllers\City\IndexController::class);
-});
+// Route::group(['prefix' => 'cities'], function () {
+//         Route::get('/', App\Http\Controllers\City\IndexController::class);
+// });
 
-Route::group(['prefix' => 'blood_groups'], function () {
-        Route::get('/', App\Http\Controllers\BloodGroup\IndexController::class);
-});
+// Route::group(['prefix' => 'blood_groups'], function () {
+//         Route::get('/', App\Http\Controllers\BloodGroup\IndexController::class);
+// });
 
 Route::group([
     'middleware' => 'api',
@@ -31,9 +31,9 @@ Route::group([
     Route::post('refresh', [App\Http\Controllers\AuthController::class, 'refresh']);
     Route::post('me', [App\Http\Controllers\AuthController::class, 'me']);
      Route::group(['middleware' => 'jwt.auth'], function () {
-        Route::group(['prefix' => 'fruits'], function () {
-            Route::get('/', App\Http\Controllers\Fruit\IndexController::class);
-        });
+        // Route::group(['prefix' => 'fruits'], function () {
+        //     Route::get('/', App\Http\Controllers\Fruit\IndexController::class);
+        // });
         Route::get('user', [AuthController::class, 'getUser']);
     });
 });
@@ -43,3 +43,6 @@ Route::group(['prefix' => 'stations'], function () {
     Route::get('/{id}', App\Http\Controllers\Station\ShowController::class);
 });
 
+Route::group(['prefix' => 'points'], function () {
+    Route::get('/', [App\Http\Controllers\Point\PointController::class, 'index']);
+});

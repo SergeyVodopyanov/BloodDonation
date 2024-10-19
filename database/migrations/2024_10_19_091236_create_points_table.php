@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('second_blood_group_count');
             $table->integer('third_blood_group_count');
             $table->integer('fourth_blood_group_count');
+            $table->integer('enough_count')->default(100);
             $table->timestamps();
         });
     }
