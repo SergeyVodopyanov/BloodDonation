@@ -19,4 +19,10 @@ class PointController extends Controller
         // $points = Point::with('donations.user', 'donations.point')->get();
         return PointResource::collection($points);
     }
+
+    public function show($id){
+        // $point = Point::with('donations.user', 'donations.point')->find($id);
+        $point = Point::find($id);
+        return new PointResource($point);
+    }
 }

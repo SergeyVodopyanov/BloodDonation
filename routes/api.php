@@ -45,4 +45,6 @@ Route::group(['prefix' => 'stations'], function () {
 
 Route::group(['prefix' => 'points'], function () {
     Route::get('/', [App\Http\Controllers\Point\PointController::class, 'index']);
+    Route::get('/{id}', [App\Http\Controllers\Point\PointController::class,'show']);
+
 });

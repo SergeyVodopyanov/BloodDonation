@@ -16,11 +16,7 @@ const router = createRouter({
             component: () => import("./components/Point/Show.vue"),
             name: "point.show",
         },
-        {
-            path: "/fruits",
-            component: () => import("./components/Fruit/Index.vue"),
-            name: "fruit.index",
-        },
+
         {
             path: "/users/login",
             component: () => import("./components/User/Login.vue"),

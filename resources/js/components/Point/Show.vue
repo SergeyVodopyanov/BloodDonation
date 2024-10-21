@@ -1,95 +1,111 @@
 <template>
-    <div v-if="isStationLoaded">
-        <div id="map"></div>
-        <div>
-            <h1>Информация о пункте сдачи крови</h1>
-            <p>Название: {{ station.bloodDonationStationTitle }}</p>
-            <p>
-                Город:
-                {{ station.city ? station.city.cityTitle : "Неизвестно" }}
-            </p>
-            <p>Адрес: {{ station.bloodDonationStationAddress }}</p>
-            <p>
-                Геолокация: {{ station.bloodDonationStationLatitude }}
-                {{ station.bloodDonationStationLongitude }}
-            </p>
+    <div v-if="isPointLoaded">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 ml-0">
+                    <div id="map" style="height: 400px"></div>
+                </div>
+                <div class="col-md-6">
+                    <div>
+                        <h1>Информация о пункте сдачи крови</h1>
+                        <h5>Название: {{ point.title }}</h5>
+                        <h5>Город: {{ point.city }}</h5>
+                        <h5>Адрес: {{ point.address }}</h5>
+                        <div class="d-flex align-items-center">
+                            <div
+                                style="
+                                    background-color: red;
+                                    width: 160px;
+                                    height: 30px;
+                                "
+                            ></div>
+                            <div class="margin-left: 50px">
+                                - означает, что в учреждении сложилась
+                                повышенная потребность в крови данной группы и
+                                резус-принадлежности, рекомендуем запланировать
+                                визит для плановой донации.
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div
+                                style="
+                                    background-color: green;
+                                    width: 160px;
+                                    height: 30px;
+                                "
+                            ></div>
+                            <div class="margin-left: 50px">
+                                - означает, что в учреждении имеется достаточный
+                                запас крови данной группы и резус-принадлежности
+                                и с визитом в Службу крови можно повременить.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Название</th>
-                    <th scope="col">Город</th>
-                    <th scope="col">Адрес</th>
-                    <th scope="col">Геолокация</th>
-                    <th scope="col">O(I) Rh+</th>
-                    <th scope="col">O(I) Rh−</th>
-                    <th scope="col">A(II) Rh+</th>
-                    <th scope="col">A(II) Rh−</th>
-                    <th scope="col">B (III) Rh+</th>
-                    <th scope="col">B (III) Rh−</th>
-                    <th scope="col">AB (IV) Rh+</th>
-                    <th scope="col">AB (IV) Rh−</th>
+                    <th scope="col">Первая группа крови</th>
+                    <th scope="col">Вторая группа крови</th>
+                    <th scope="col">Третья группа крови</th>
+                    <th scope="col">Четвёртая группа крови</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <th scope="row">{{ station.id }}</th>
-                    <td>{{ station.bloodDonationStationTitle }}</td>
-                    <td>{{ station.city.cityTitle }}</td>
-                    <td>{{ station.bloodDonationStationAddress }}</td>
-                    <td>
-                        {{
-                            station.bloodDonationStationLatitude +
-                            " " +
-                            station.bloodDonationStationLongitude
-                        }}
+                    <td style="text-align: center">
+                        <div
+                            :style="{
+                                backgroundColor:
+                                    point.first_blood_group_count <
+                                    point.enough_count
+                                        ? 'red'
+                                        : 'green',
+                                width: '160px',
+                                height: '30px',
+                            }"
+                        ></div>
                     </td>
-                    <td>
-                        {{
-                            getBloodGroupStatus(station, "Первая положительная")
-                        }}
+                    <td style="text-align: center">
+                        <div
+                            :style="{
+                                backgroundColor:
+                                    point.second_blood_group_count <
+                                    point.enough_count
+                                        ? 'red'
+                                        : 'green',
+                                width: '160px',
+                                height: '30px',
+                            }"
+                        ></div>
                     </td>
-                    <td>
-                        {{
-                            getBloodGroupStatus(station, "Первая отрицательная")
-                        }}
+                    <td style="text-align: center">
+                        <div
+                            :style="{
+                                backgroundColor:
+                                    point.third_blood_group_count <
+                                    point.enough_count
+                                        ? 'red'
+                                        : 'green',
+                                width: '160px',
+                                height: '30px',
+                            }"
+                        ></div>
                     </td>
-                    <td>
-                        {{
-                            getBloodGroupStatus(station, "Вторая положительная")
-                        }}
-                    </td>
-                    <td>
-                        {{
-                            getBloodGroupStatus(station, "Вторая отрицательная")
-                        }}
-                    </td>
-                    <td>
-                        {{
-                            getBloodGroupStatus(station, "Третья положительная")
-                        }}
-                    </td>
-                    <td>
-                        {{
-                            getBloodGroupStatus(station, "Третья отрицательная")
-                        }}
-                    </td>
-                    <td>
-                        {{
-                            getBloodGroupStatus(
-                                station,
-                                "Четвёртая положительная"
-                            )
-                        }}
-                    </td>
-                    <td>
-                        {{
-                            getBloodGroupStatus(
-                                station,
-                                "Четвёртая отрицательная"
-                            )
-                        }}
+                    <td style="text-align: center">
+                        <div
+                            :style="{
+                                backgroundColor:
+                                    point.fourth_blood_group_count <
+                                    point.enough_count
+                                        ? 'red'
+                                        : 'green',
+                                width: '160px',
+                                height: '30px',
+                            }"
+                        ></div>
                     </td>
                 </tr>
             </tbody>
@@ -112,24 +128,25 @@ const authStore = useAuthStore();
 
 let user = computed(() => authStore.user);
 
-console.log(user.value); // Выведет объект пользователя
-// console.log(user.value.id); // Должен вывести ID пользователя
+console.log(user.value);
 
-const station = ref({});
+const point = ref(null);
 
-let isStationLoaded = ref(false);
+let isPointLoaded = ref(false);
 
 onMounted(() => {
-    const stationId = route.params.id;
-    api.get(`/api/stations/${stationId}`).then((res) => {
-        station.value = res.data.data;
-        // console.log(station.value);
-        isStationLoaded.value = true;
+    const pointId = route.params.id;
+    api.get(`/api/points/${pointId}`).then((res) => {
+        point.value = res.data.data;
+        console.log("Значение point.value после axios-запроса");
+
+        console.log(point.value);
+        isPointLoaded.value = true;
         init();
     });
 });
+
 function addBloodDonation() {
-    // console.log(station.value.donationSessions.length);
     if (!user.value) {
         console.error(
             "Пользователь не авторизован или данные о пользователе не загружены."
@@ -138,7 +155,7 @@ function addBloodDonation() {
     }
 
     const donationSessionId = Math.floor(
-        Math.random() * station.value.donationSessions.length
+        Math.random() * point.value.donationSessions.length
     );
     const userId = user.value.id;
 
@@ -158,44 +175,36 @@ function addBloodDonation() {
         });
 }
 
-function getBloodGroupStatus(station, bloodGroupTitle) {
-    const bloodGroup = station.bloodGroups.find(
-        (group) => group.bloodGroupTitle === bloodGroupTitle
-    );
-    if (bloodGroup) {
-        if (bloodGroup.bloodInStationEnough === true) {
-            return "Не требуется";
-        } else if (bloodGroup.bloodInStationEnough === false) {
-            return "Требуется";
-        }
-    } else return "Неизвестно";
-}
-
 function init() {
-    if (!isStationLoaded.value) return;
+    if (!isPointLoaded.value) return; // Проверяем, загружены ли данные
+    let pointOnMap = point.value;
+    let [latitude, longitude] = pointOnMap.geolocation.split(", ");
     ymaps.ready(() => {
         var myMap = new ymaps.Map("map", {
-            center: [55.76, 37.64],
+            // center: [55.76, 37.64],
+            center: [latitude, longitude],
             zoom: 10,
         });
 
-        let points = [];
+        // Массив с данными о пунктах сдачи крови
+        let pointsOnMap = [];
 
-        // console.log(station.value);
+        // let pointOnMap = point.value;
+        console.log(pointOnMap);
+        // let [latitude, longitude] = pointOnMap.geolocation.split(", ");
+
         let newPoint = {
-            coordinates: [
-                station.value.bloodDonationStationLatitude,
-                station.value.bloodDonationStationLongitude,
-            ],
-            title: station.value.bloodDonationStationTitle,
-            description: station.value.bloodDonationStationAddress,
+            coordinates: [latitude, longitude],
+            title: pointOnMap.title,
+            description: pointOnMap.address,
         };
-        points.push(newPoint);
+        pointsOnMap.push(newPoint);
 
-        points.forEach(function (point) {
-            var placemark = new ymaps.Placemark(point.coordinates, {
-                balloonContentHeader: point.title,
-                balloonContentBody: point.description,
+        // Добавляем метки на карту
+        pointsOnMap.forEach(function (pointOnMap) {
+            var placemark = new ymaps.Placemark(pointOnMap.coordinates, {
+                balloonContentHeader: pointOnMap.title,
+                balloonContentBody: pointOnMap.description,
             });
             myMap.geoObjects.add(placemark);
         });
