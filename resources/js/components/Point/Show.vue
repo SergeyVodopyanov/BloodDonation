@@ -110,8 +110,8 @@
                 </tr>
             </tbody>
         </table>
-        <button @click="addBloodDonation" class="btn btn-primary">
-            Добавить запись о сдаче крови
+        <button @click="createDonation" class="btn btn-primary">
+            Записаться на сдачу крови
         </button>
     </div>
 </template>
@@ -146,7 +146,7 @@ onMounted(() => {
     });
 });
 
-function addBloodDonation() {
+function createDonation() {
     if (!user.value) {
         console.error(
             "Пользователь не авторизован или данные о пользователе не загружены."
@@ -154,18 +154,19 @@ function addBloodDonation() {
         return;
     }
 
-    const donationSessionId = Math.floor(
-        Math.random() * point.value.donationSessions.length
-    );
-    const userId = user.value.id;
+    // const donationSessionId = Math.floor(
+    //     Math.random() * point.value.donationSessions.length
+    // );
+    const user_id = user.value.id;
+    const point_id = point.value.id;
 
-    console.log("donationSessionId:", donationSessionId);
-    console.log("userId:", userId);
+    console.log("id пользователя:", user_id);
+    console.log("id пункта сдачи крови:", point_id);
 
     axios
-        .post("/api/bloodDonations", {
-            donationSessionId: donationSessionId,
-            userId: userId,
+        .post("/api/donations", {
+            user_id: user_id,
+            point_id: point_id,
         })
         .then((response) => {
             console.log(response.data);

@@ -13,13 +13,7 @@ Route::group(['prefix' => 'users'], function () {
 Route::group(['prefix' => 'bloodDonations'], function () {
     Route::post('/', App\Http\Controllers\BloodDonation\StoreController::class);
 });
-// Route::group(['prefix' => 'cities'], function () {
-//         Route::get('/', App\Http\Controllers\City\IndexController::class);
-// });
 
-// Route::group(['prefix' => 'blood_groups'], function () {
-//         Route::get('/', App\Http\Controllers\BloodGroup\IndexController::class);
-// });
 
 Route::group([
     'middleware' => 'api',
@@ -48,3 +42,7 @@ Route::group(['prefix' => 'points'], function () {
     Route::get('/{id}', [App\Http\Controllers\Point\PointController::class,'show']);
 
 });
+
+Route::post('/donations', [App\Http\Controllers\Donation\DonationController::class, 'store']);
+
+
