@@ -24,6 +24,8 @@ class StoreRequest extends FormRequest
         return [
             'user_id' => 'required|integer|exists:users,id',
             'point_id' => 'required|integer|exists:points,id',
+            'date' => 'required',
+            'time' => 'required',
         ];
     }
 }

@@ -110,9 +110,19 @@
                 </tr>
             </tbody>
         </table>
-        <button @click="createDonation" class="btn btn-primary">
-            Записаться на сдачу крови
-        </button>
+        <div class="donation-form">
+            <div class="form-group">
+                <label for="date">Выберите дату:</label>
+                <flat-pickr v-model="selectedDate" :config="datePickerConfig" />
+            </div>
+            <div class="form-group">
+                <label for="time">Выберите время:</label>
+                <flat-pickr v-model="selectedTime" :config="timePickerConfig" />
+            </div>
+            <button @click="createDonation" class="btn btn-primary">
+                Записаться на сдачу крови
+            </button>
+        </div>
     </div>
 </template>
 
@@ -122,17 +132,30 @@ import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import api from "../../api";
 import { useAuthStore } from "../../stores/auth";
+import flatPickr from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
 
 const route = useRoute();
 const authStore = useAuthStore();
 
 let user = computed(() => authStore.user);
 
-console.log(user.value);
-
 const point = ref(null);
 
 let isPointLoaded = ref(false);
+
+const selectedDate = ref(null);
+const selectedTime = ref(null);
+const datePickerConfig = {
+    dateFormat: "Y-m-d",
+    enableTime: false,
+};
+const timePickerConfig = {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    time_24hr: true,
+};
 
 onMounted(() => {
     const pointId = route.params.id;
@@ -157,16 +180,20 @@ function createDonation() {
     // const donationSessionId = Math.floor(
     //     Math.random() * point.value.donationSessions.length
     // );
-    const user_id = user.value.id;
-    const point_id = point.value.id;
+    const userId = user.value.id;
+    const pointId = point.value.id;
 
-    console.log("id пользователя:", user_id);
-    console.log("id пункта сдачи крови:", point_id);
+    console.log("id пользователя:", userId);
+    console.log("id пункта сдачи крови:", pointId);
+    console.log("Дата:", selectedDate.value);
+    console.log("Время:", selectedTime.value);
 
     axios
         .post("/api/donations", {
-            user_id: user_id,
-            point_id: point_id,
+            user_id: userId,
+            point_id: pointId,
+            date: selectedDate.value,
+            time: selectedTime.value,
         })
         .then((response) => {
             console.log(response.data);
@@ -217,5 +244,29 @@ function init() {
 #map {
     width: 100%;
     height: 500px;
+}
+</style>
+
+<style scoped>
+.donation-form {
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.btn-primary {
+    margin-top: 10px;
 }
 </style>
