@@ -24,13 +24,13 @@ Route::group([
     Route::post('logout', [App\Http\Controllers\AuthController::class, 'logout']);
     Route::post('refresh', [App\Http\Controllers\AuthController::class, 'refresh']);
     Route::post('me', [App\Http\Controllers\AuthController::class, 'me']);
-     Route::group(['middleware' => 'jwt.auth'], function () {
-        // Route::group(['prefix' => 'fruits'], function () {
-        //     Route::get('/', App\Http\Controllers\Fruit\IndexController::class);
-        // });
+    Route::group(['middleware' => 'jwt.auth'], function () {
         Route::get('user', [AuthController::class, 'getUser']);
+        Route::get('user/{user_id}/donations', [App\Http\Controllers\User\UserController::class, 'getUserDonations']);
     });
 });
+
+// Route::get('/user/{user_id}/donations', [App\Http\Controllers\User\UserController::class, 'getUserDonations']);
 
 Route::group(['prefix' => 'stations'], function () {
     Route::get('/', App\Http\Controllers\Station\IndexController::class);

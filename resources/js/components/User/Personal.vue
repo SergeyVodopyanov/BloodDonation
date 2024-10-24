@@ -1,35 +1,36 @@
 <template>
-    <div v-if="user" class="row justify-content-center">
-        <div class="col-6 bg-light p-4 mx-auto">
-            <div class="user-profile card shadow-sm p-4">
+    <div class="container mt-5">
+        <div v-if="user" class="row justify-content-center">
+            <div class="card shadow-sm p-4">
+                <h4 class="mb-4">Личные данные</h4>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Фамилия:</label>
+                        <div class="mb-3">
+                            <label class="form-label">Фамилия:</label>
                             <span class="form-control-plaintext">{{
-                                user.userLastName
+                                user.last_name
                             }}</span>
                         </div>
-                        <div class="form-group">
-                            <label>Имя:</label>
+                        <div class="mb-3">
+                            <label class="form-label">Имя:</label>
                             <span class="form-control-plaintext">{{
-                                user.userFirstName
+                                user.first_name
                             }}</span>
                         </div>
-                        <div class="form-group">
-                            <label>Отчество:</label>
+                        <div class="mb-3">
+                            <label class="form-label">Отчество:</label>
                             <span class="form-control-plaintext">{{
-                                user.userMiddleName
+                                user.middle_name
                             }}</span>
                         </div>
-                        <div class="form-group">
-                            <label>Колличество донаций:</label>
+                        <div class="mb-3">
+                            <label class="form-label">Кол-во донаций:</label>
                             <span class="form-control-plaintext">{{
-                                user.userDonationCount
+                                donations.length
                             }}</span>
                             <span class="form-control-plaintext text-muted">
                                 {{
-                                    userIsHonoraryDonor
+                                    donations.length >= 40
                                         ? "Вы являетесь почётным донором!"
                                         : "Почётным донором можно стать после 40 донаций"
                                 }}
@@ -37,42 +38,62 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Серия паспорта:</label>
+                        <div class="mb-3">
+                            <label class="form-label">Серия паспорта:</label>
                             <span class="form-control-plaintext">{{
-                                user.userPassportSeries
+                                user.passport_series
                             }}</span>
                         </div>
-                        <div class="form-group">
-                            <label>Номер паспорта:</label>
+                        <div class="mb-3">
+                            <label class="form-label">Номер паспорта:</label>
                             <span class="form-control-plaintext">{{
-                                user.userPassportNumber
+                                user.passport_number
                             }}</span>
                         </div>
-                        <div class="form-group">
-                            <label>Город:</label>
+                        <div class="mb-3">
+                            <label class="form-label">Город:</label>
                             <span class="form-control-plaintext">{{
-                                userCity
+                                user.city
                             }}</span>
                         </div>
-                        <div class="form-group">
-                            <label>Группа крови:</label>
+                        <div class="mb-3">
+                            <label class="form-label">Группа крови:</label>
                             <span class="form-control-plaintext">{{
-                                userBloodGroup
+                                user.blood_group
                             }}</span>
                         </div>
-                        <div class="form-group">
-                            <label>Электронная почта:</label>
+                        <div class="mb-3">
+                            <label class="form-label">Электронная почта:</label>
                             <span class="form-control-plaintext">{{
                                 user.email
                             }}</span>
                         </div>
-                        <div class="form-group">
-                            <label>Пароль:</label>
-                            <span class="form-control-plaintext"> ??? </span>
-                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-5">
+            <div class="card shadow-sm p-4">
+                <h4 class="mb-4">История донаций</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Дата</th>
+                            <th scope="col">Время</th>
+                            <th scope="col">Учреждение</th>
+                            <th scope="col">Адрес</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="donation in donations" :key="donation.id">
+                            <td>{{ donation.date }}</td>
+                            <td>{{ donation.time }}</td>
+                            <td>{{ donation.point.title }}</td>
+                            <td>{{ donation.point.address }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -87,43 +108,23 @@ import { useAuthStore } from "../../stores/auth";
 const authStore = useAuthStore();
 const route = useRoute();
 
-// let person = ref({});
-
 let user = computed(() => authStore.user);
-let userCity = ref(null);
-let userBloodGroup = ref(null);
-let cities = ref(null);
-let bloodGroups = ref(null);
-
-console.log(user.value); // Выведет объект пользователя
+let donations = ref(null);
 
 onMounted(() => {
     axios
-        .get("/api/cities")
+        .get(`/api/auth/user/${user.value.id}/donations`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+        })
         .then((response) => {
-            cities.value = response.data.data;
-            // console.log(user.value.cityId);
-            userCity.value = cities.value.find(
-                (city) => city.id === user.value.cityId
-            ).cityTitle;
-            // console.log("sdsds" + userCity);
-            // console.log(cities.value);
+            console.log(response.data);
+            donations.value = response.data;
+            console.log(donations.value);
         })
         .catch((error) => {
-            console.error(error);
-        });
-
-    axios
-        .get("/api/blood_groups")
-        .then((response) => {
-            bloodGroups.value = response.data.data;
-            // console.log(bloodGroups.value);
-            userBloodGroup.value = bloodGroups.value.find(
-                (bloodGroup) => bloodGroup.id === user.value.bloodGroupId
-            ).bloodGroupTitle;
-        })
-        .catch((error) => {
-            console.error(error);
+            console.error("Error fetching donations:", error);
         });
 });
 </script>
