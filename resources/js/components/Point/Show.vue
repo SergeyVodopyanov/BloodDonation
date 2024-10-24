@@ -111,13 +111,29 @@
             </tbody>
         </table>
         <div class="donation-form">
-            <div class="form-group">
+            <div class="form-group w-25">
                 <label for="date">Выберите дату:</label>
                 <flat-pickr v-model="selectedDate" :config="datePickerConfig" />
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label for="time">Выберите время:</label>
                 <flat-pickr v-model="selectedTime" :config="timePickerConfig" />
+            </div> -->
+            <div class="form-group w-25">
+                <label for="timePeriod">Выберите время:</label>
+                <select
+                    class="form-control"
+                    id="timePeriod"
+                    v-model="selectedTime"
+                >
+                    <option
+                        v-for="time in availableTimes"
+                        :key="time"
+                        :value="time"
+                    >
+                        {{ time }}
+                    </option>
+                </select>
             </div>
             <button @click="createDonation" class="btn btn-primary">
                 Записаться на сдачу крови
@@ -128,7 +144,7 @@
 
 <script setup>
 import axios from "axios";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import api from "../../api";
 import { useAuthStore } from "../../stores/auth";
@@ -144,29 +160,93 @@ const point = ref(null);
 
 let isPointLoaded = ref(false);
 
+let allTimes = [
+    "08:00:00",
+    "08:15:00",
+    "08:30:00",
+    "08:45:00",
+    "09:00:00",
+    "09:15:00",
+    "09:30:00",
+    "09:45:00",
+    "10:00:00",
+    "10:15:00",
+    "10:30:00",
+    "10:45:00",
+    "11:00:00",
+    "11:15:00",
+    "11:30:00",
+    "11:45:00",
+    "12:00:00",
+    "12:15:00",
+    "12:30:00",
+    "12:45:00",
+    "13:00:00",
+    "13:15:00",
+    "13:30:00",
+    "13:45:00",
+    "14:00:00",
+    "14:15:00",
+    "14:30:00",
+    "14:45:00",
+    "15:00:00",
+    "15:15:00",
+    "15:30:00",
+    "15:45:00",
+    "16:00:00",
+];
+
+let takenTimes = ref(null);
+let availableTimes = ref(null);
+
 const selectedDate = ref(null);
 const selectedTime = ref(null);
 const datePickerConfig = {
     dateFormat: "Y-m-d",
     enableTime: false,
 };
-const timePickerConfig = {
-    enableTime: true,
-    noCalendar: true,
-    dateFormat: "H:i",
-    time_24hr: true,
-};
+
+// const timePickerConfig = {
+//     enableTime: true,
+//     noCalendar: true,
+//     dateFormat: "H:i",
+//     time_24hr: true,
+// };
 
 onMounted(() => {
     const pointId = route.params.id;
     api.get(`/api/points/${pointId}`).then((res) => {
         point.value = res.data.data;
-        console.log("Значение point.value после axios-запроса");
-
-        console.log(point.value);
+        // console.log("Значение point.value после axios-запроса");
+        // console.log(point.value);
         isPointLoaded.value = true;
         init();
     });
+});
+
+watchEffect(() => {
+    const pointId = route.params.id;
+    if (selectedDate.value) {
+        axios
+            .get(`/api/points/${pointId}/available_times`, {
+                params: {
+                    date: selectedDate.value,
+                },
+            })
+            .then((response) => {
+                takenTimes.value = response.data;
+                availableTimes.value = allTimes.filter(
+                    (item) => !takenTimes.value.includes(item)
+                );
+                console.log("занятое время " + takenTimes.value);
+                console.log("свободное время " + availableTimes.value);
+            })
+            .catch((error) => {
+                console.error("Ошибка при получении доступных времен:", error);
+            });
+    } else {
+        takenTimes.value = [];
+    }
 });
 
 function createDonation() {
@@ -218,7 +298,7 @@ function init() {
         let pointsOnMap = [];
 
         // let pointOnMap = point.value;
-        console.log(pointOnMap);
+        // console.log(pointOnMap);
         // let [latitude, longitude] = pointOnMap.geolocation.split(", ");
 
         let newPoint = {
