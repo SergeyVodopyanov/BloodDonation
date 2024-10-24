@@ -15,11 +15,11 @@
                             <div
                                 style="
                                     background-color: red;
-                                    width: 160px;
+                                    width: 180px;
                                     height: 30px;
                                 "
                             ></div>
-                            <div class="margin-left: 50px">
+                            <div style="margin-left: 25px">
                                 - означает, что в учреждении сложилась
                                 повышенная потребность в крови данной группы и
                                 резус-принадлежности, рекомендуем запланировать
@@ -34,7 +34,7 @@
                                     height: 30px;
                                 "
                             ></div>
-                            <div class="margin-left: 50px">
+                            <div style="margin-left: 25px">
                                 - означает, что в учреждении имеется достаточный
                                 запас крови данной группы и резус-принадлежности
                                 и с визитом в Службу крови можно повременить.
@@ -135,16 +135,30 @@
                     </option>
                 </select>
             </div>
-            <button @click="createDonation" class="btn btn-primary">
-                Записаться на сдачу крови
-            </button>
+            <!-- <div v-if="isPointLoaded">
+                <button
+                    @click="createDonation"
+                    :disabled="bloodNeed.value"
+                    class="btn btn-primary"
+                >
+                    Записаться на сдачу крови
+                </button>
+                <span v-if="bloodNeed.value === false" class="text-muted ml-2">
+                    В данном пункте достаточно крови вашей группы
+                </span>
+            </div> -->
+            <div>
+                <button @click="createDonation" class="btn btn-primary">
+                    Записаться на сдачу крови
+                </button>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
 import axios from "axios";
-import { ref, onMounted, computed, watchEffect } from "vue";
+import { ref, onMounted, computed, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import api from "../../api";
 import { useAuthStore } from "../../stores/auth";
@@ -156,9 +170,13 @@ const authStore = useAuthStore();
 
 let user = computed(() => authStore.user);
 
+console.log(user.value.blood_group);
+
 const point = ref(null);
 
 let isPointLoaded = ref(false);
+
+let bloodNeed = ref(null);
 
 let allTimes = [
     "08:00:00",
@@ -206,22 +224,18 @@ const datePickerConfig = {
     enableTime: false,
 };
 
-// const timePickerConfig = {
-//     enableTime: true,
-//     noCalendar: true,
-//     dateFormat: "H:i",
-//     time_24hr: true,
-// };
-
 onMounted(() => {
     const pointId = route.params.id;
     api.get(`/api/points/${pointId}`).then((res) => {
         point.value = res.data.data;
-        // console.log("Значение point.value после axios-запроса");
-        // console.log(point.value);
         isPointLoaded.value = true;
+        updateBloodNeed();
         init();
     });
+});
+
+watch(point, () => {
+    updateBloodNeed();
 });
 
 watchEffect(() => {
@@ -249,6 +263,23 @@ watchEffect(() => {
     }
 });
 
+function updateBloodNeed() {
+    if (user.value.blood_group === "Первая группа крови") {
+        bloodNeed.value =
+            point.value.first_blood_group_count < point.value.enough_count;
+    } else if (user.value.blood_group === "Вторая группа крови") {
+        bloodNeed.value =
+            point.value.second_blood_group_count < point.value.enough_count;
+    } else if (user.value.blood_group === "Третья группа крови") {
+        bloodNeed.value =
+            point.value.third_blood_group_count < point.value.enough_count;
+    } else {
+        bloodNeed.value =
+            point.value.fourth_blood_group_count < point.value.enough_count;
+    }
+    console.log("bloodNeed.value:", bloodNeed.value);
+}
+
 function createDonation() {
     if (!user.value) {
         console.error(
@@ -257,9 +288,6 @@ function createDonation() {
         return;
     }
 
-    // const donationSessionId = Math.floor(
-    //     Math.random() * point.value.donationSessions.length
-    // );
     const userId = user.value.id;
     const pointId = point.value.id;
 
@@ -289,17 +317,11 @@ function init() {
     let [latitude, longitude] = pointOnMap.geolocation.split(", ");
     ymaps.ready(() => {
         var myMap = new ymaps.Map("map", {
-            // center: [55.76, 37.64],
             center: [latitude, longitude],
             zoom: 10,
         });
 
-        // Массив с данными о пунктах сдачи крови
         let pointsOnMap = [];
-
-        // let pointOnMap = point.value;
-        // console.log(pointOnMap);
-        // let [latitude, longitude] = pointOnMap.geolocation.split(", ");
 
         let newPoint = {
             coordinates: [latitude, longitude],
@@ -308,7 +330,6 @@ function init() {
         };
         pointsOnMap.push(newPoint);
 
-        // Добавляем метки на карту
         pointsOnMap.forEach(function (pointOnMap) {
             var placemark = new ymaps.Placemark(pointOnMap.coordinates, {
                 balloonContentHeader: pointOnMap.title,

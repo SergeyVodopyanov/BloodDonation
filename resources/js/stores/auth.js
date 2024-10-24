@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
+import axios from "axios";
 
 export const useAuthStore = defineStore("auth", {
     state: () => ({
         accessToken: localStorage.getItem("access_token") || null,
-        user: null,
+        user: JSON.parse(localStorage.getItem("user")) || null,
     }),
     actions: {
         setAccessToken(token) {
@@ -14,6 +15,7 @@ export const useAuthStore = defineStore("auth", {
             this.accessToken = null;
             this.user = null;
             localStorage.removeItem("access_token");
+            localStorage.removeItem("user");
         },
         login(token) {
             this.setAccessToken(token);
@@ -30,7 +32,7 @@ export const useAuthStore = defineStore("auth", {
                     },
                 });
                 this.user = response.data; // Сохраняем информацию о пользователе
-                // console.log(this.user);
+                localStorage.setItem("user", JSON.stringify(this.user)); // Сохраняем в localStorage
             } catch (error) {
                 console.error("Failed to fetch user:", error);
             }
