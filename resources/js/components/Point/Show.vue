@@ -148,9 +148,16 @@
                 </span>
             </div> -->
             <div>
-                <button @click="createDonation" class="btn btn-primary">
+                <button
+                    :disabled="newDonationDate"
+                    @click="createDonation"
+                    class="btn btn-primary"
+                >
                     Записаться на сдачу крови
                 </button>
+                <span v-if="newDonationDate" class="text-muted ml-2">
+                    Ближаяшая досупная дата сдачи крови: {{ newDonationDate }}
+                </span>
             </div>
         </div>
     </div>
@@ -173,6 +180,10 @@ let user = computed(() => authStore.user);
 // console.log(user.value.blood_group);
 
 const point = ref(null);
+
+let lastDonationDateLoaded = ref(null);
+let lastDonationDate = ref(null);
+let newDonationDate = ref(null);
 
 let isPointLoaded = ref(false);
 
@@ -232,6 +243,39 @@ onMounted(() => {
         updateBloodNeed();
         init();
     });
+    axios
+        .get(`/api/auth/user/${user.value.id}/last_donation`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+        })
+        .then((response) => {
+            lastDonationDateLoaded.value = true;
+            lastDonationDate.value = response.data.date;
+            // console.log(lastDonationDate.value);
+            newDonationDate.value = new Date(lastDonationDate.value);
+            newDonationDate.value.setDate(newDonationDate.value.getDate() + 40);
+
+            const today = new Date();
+            if (newDonationDate.value < today) {
+                newDonationDate.value = null;
+            } else {
+                const year = newDonationDate.value.getFullYear();
+                const month = String(
+                    newDonationDate.value.getMonth() + 1
+                ).padStart(2, "0");
+                const day = String(newDonationDate.value.getDate()).padStart(
+                    2,
+                    "0"
+                );
+                newDonationDate.value = `${year}-${month}-${day}`;
+            }
+
+            console.log(newDonationDate.value);
+        })
+        .catch((error) => {
+            console.error("Error fetching donations:", error);
+        });
 });
 
 watch(point, () => {
