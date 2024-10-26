@@ -85,6 +85,8 @@
             <div class="row justify-content-center mt-5">
                 <div class="card shadow-sm p-4">
                     <h4 class="mb-4">История донаций</h4>
+                    После последней донации должно пройти 40 дней. Ближайший
+                    день для новой донации: {{ newDonationDate }}
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -123,7 +125,17 @@ const route = useRoute();
 
 let user = computed(() => authStore.user);
 let donations = ref(null);
+let lastDonationDate = ref(null);
+let newDonationDate = ref(null);
+
 let isDonationsLoaded = ref(null);
+let lastDonationDateLoaded = ref(null);
+
+// if (lastDonationDateLoaded) {
+//     newDonationDate.value = Date(lastDonationDate.value);
+//     newDonationDate.value.setDate(newDonationDate.value.getDate() + 40);
+//     console.log(newDonationDate.value);
+// }
 
 onMounted(() => {
     axios
@@ -134,9 +146,36 @@ onMounted(() => {
         })
         .then((response) => {
             isDonationsLoaded.value = true;
-            console.log(response.data);
+            // console.log(response.data);
             donations.value = response.data;
-            console.log(donations.value);
+            // console.log(donations.value);
+        })
+        .catch((error) => {
+            console.error("Error fetching donations:", error);
+        });
+    axios
+        .get(`/api/auth/user/${user.value.id}/last_donation`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+        })
+        .then((response) => {
+            lastDonationDateLoaded.value = true;
+            lastDonationDate.value = response.data.date;
+            // console.log(lastDonationDate.value);
+            newDonationDate.value = new Date(lastDonationDate.value);
+            newDonationDate.value.setDate(newDonationDate.value.getDate() + 40);
+            const year = newDonationDate.value.getFullYear();
+            const month = String(newDonationDate.value.getMonth() + 1).padStart(
+                2,
+                "0"
+            );
+            const day = String(newDonationDate.value.getDate()).padStart(
+                2,
+                "0"
+            );
+            newDonationDate.value = `${year}-${month}-${day}`;
+            // console.log(newDonationDate.value);
         })
         .catch((error) => {
             console.error("Error fetching donations:", error);

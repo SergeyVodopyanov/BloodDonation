@@ -47,7 +47,7 @@ function getPoints(api) {
         // },
     }).then((res) => {
         points.value = res.data.data;
-        console.log(points.value);
+        // console.log(points.value);
         isPointsLoaded.value = true;
         init(); // Вызываем init только после загрузки данных
     });
@@ -73,7 +73,7 @@ function init() {
         let pointsOnMap = [];
         for (let i = 0; i < points.value.length; i++) {
             let pointOnMap = points.value[i];
-            console.log(pointOnMap);
+            // console.log(pointOnMap);
             let [latitude, longitude] = pointOnMap.geolocation.split(", ");
 
             let newPoint = {

@@ -27,6 +27,8 @@ Route::group([
     Route::group(['middleware' => 'jwt.auth'], function () {
         Route::get('user', [AuthController::class, 'getUser']);
         Route::get('user/{user_id}/donations', [App\Http\Controllers\User\UserController::class, 'getUserDonations']);
+        Route::get('user/{user_id}/last_donation', [App\Http\Controllers\User\UserController::class, 'getLastDonation']);
+
     });
 });
 

@@ -170,7 +170,7 @@ const authStore = useAuthStore();
 
 let user = computed(() => authStore.user);
 
-console.log(user.value.blood_group);
+// console.log(user.value.blood_group);
 
 const point = ref(null);
 
@@ -252,8 +252,8 @@ watchEffect(() => {
                 availableTimes.value = allTimes.filter(
                     (item) => !takenTimes.value.includes(item)
                 );
-                console.log("занятое время " + takenTimes.value);
-                console.log("свободное время " + availableTimes.value);
+                // console.log("занятое время " + takenTimes.value);
+                // console.log("свободное время " + availableTimes.value);
             })
             .catch((error) => {
                 console.error("Ошибка при получении доступных времен:", error);
@@ -277,7 +277,7 @@ function updateBloodNeed() {
         bloodNeed.value =
             point.value.fourth_blood_group_count < point.value.enough_count;
     }
-    console.log("bloodNeed.value:", bloodNeed.value);
+    // console.log("bloodNeed.value:", bloodNeed.value);
 }
 
 function createDonation() {
@@ -291,10 +291,10 @@ function createDonation() {
     const userId = user.value.id;
     const pointId = point.value.id;
 
-    console.log("id пользователя:", userId);
-    console.log("id пункта сдачи крови:", pointId);
-    console.log("Дата:", selectedDate.value);
-    console.log("Время:", selectedTime.value);
+    // console.log("id пользователя:", userId);
+    // console.log("id пункта сдачи крови:", pointId);
+    // console.log("Дата:", selectedDate.value);
+    // console.log("Время:", selectedTime.value);
 
     axios
         .post("/api/donations", {
@@ -304,7 +304,7 @@ function createDonation() {
             time: selectedTime.value,
         })
         .then((response) => {
-            console.log(response.data);
+            // console.log(response.data);
         })
         .catch((error) => {
             console.error(error);
