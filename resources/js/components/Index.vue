@@ -38,6 +38,13 @@
                         </li>
                         <li class="nav-item" v-if="accessToken">
                             <router-link
+                                :to="{ name: 'point.import' }"
+                                class="nav-link"
+                                >Импорт из Excel</router-link
+                            >
+                        </li>
+                        <li class="nav-item" v-if="accessToken">
+                            <router-link
                                 :to="{ name: 'user.personal' }"
                                 class="nav-link"
                                 >Личный кабинет</router-link

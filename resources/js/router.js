@@ -16,7 +16,11 @@ const router = createRouter({
             component: () => import("./components/Point/Show.vue"),
             name: "point.show",
         },
-
+        {
+            path: "/points/import",
+            component: () => import("./components/Point/Import.vue"),
+            name: "point.import",
+        },
         {
             path: "/users/login",
             component: () => import("./components/User/Login.vue"),

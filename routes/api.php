@@ -41,7 +41,7 @@ Route::group(['prefix' => 'points'], function () {
     Route::get('/', [App\Http\Controllers\Point\PointController::class, 'index']);
     Route::get('/{id}', [App\Http\Controllers\Point\PointController::class,'show']);
     Route::get('/{id}/available_times', [App\Http\Controllers\Point\PointController::class,'getAvailableTimes']);
-
+    Route::post('/import', [App\Http\Controllers\Point\PointController::class, 'import']);
 });
 
 Route::post('/donations', [App\Http\Controllers\Donation\DonationController::class, 'store']);
