@@ -149,7 +149,7 @@
             </div> -->
             <div>
                 <button
-                    :disabled="newDonationDate"
+                    :disabled="newDonationDate || showBloodNeedMessage"
                     @click="createDonation"
                     class="btn btn-primary"
                 >
@@ -157,6 +157,9 @@
                 </button>
                 <span v-if="newDonationDate" class="text-muted ml-2">
                     Ближаяшая досупная дата сдачи крови: {{ newDonationDate }}
+                </span>
+                <span v-if="showBloodNeedMessage" class="text-muted ml-2">
+                    В данном пункте достаточно крови вашей группы
                 </span>
             </div>
         </div>
@@ -188,6 +191,7 @@ let newDonationDate = ref(null);
 let isPointLoaded = ref(false);
 
 let bloodNeed = ref(null);
+const showBloodNeedMessage = computed(() => !bloodNeed.value);
 
 let allTimes = [
     "08:00:00",
@@ -271,7 +275,7 @@ onMounted(() => {
                 newDonationDate.value = `${year}-${month}-${day}`;
             }
 
-            console.log(newDonationDate.value);
+            // console.log(newDonationDate.value);
         })
         .catch((error) => {
             console.error("Error fetching donations:", error);
@@ -321,7 +325,7 @@ function updateBloodNeed() {
         bloodNeed.value =
             point.value.fourth_blood_group_count < point.value.enough_count;
     }
-    // console.log("bloodNeed.value:", bloodNeed.value);
+    console.log("bloodNeed.value:", bloodNeed.value);
 }
 
 function createDonation() {
