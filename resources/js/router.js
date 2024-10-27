@@ -62,7 +62,8 @@ router.beforeEach((to, from, next) => {
         accessToken &&
         (to.name === "user.login" || to.name === "user.registration")
     ) {
-        return next({ name: "personal.index" });
+        // return next({ name: "personal.index" });
+        return next({ name: "point.index" });
     }
 
     next();

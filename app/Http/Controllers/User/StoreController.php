@@ -12,7 +12,7 @@ class StoreController extends Controller
 {
     public function __invoke(StoreRequest $request){
         $data = $request->validated();
-        dump($data);
+        // dump($data);
         $data['password'] = Hash::make($data['password']);
         $user = User::where('email', $data['email'])->first();
         if($user){

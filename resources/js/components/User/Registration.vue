@@ -7,36 +7,66 @@
                 class="form-control bt-3 mb-3"
                 placeholder="Фамилия"
             />
+            <div v-if="errorLoaded && errors.last_name" class="text-danger">
+                {{ errors.last_name[0] }}
+            </div>
+
             <input
                 v-model="first_name"
                 type="text"
                 class="form-control bt-3 mb-3"
                 placeholder="Имя"
             />
+            <div v-if="errorLoaded && errors.first_name" class="text-danger">
+                {{ errors.first_name[0] }}
+            </div>
+
             <input
                 v-model="middle_name"
                 type="text"
                 class="form-control bt-3 mb-3"
                 placeholder="Отчество"
             />
+            <div v-if="errorLoaded && errors.middle_name" class="text-danger">
+                {{ errors.middle_name[0] }}
+            </div>
+
             <input
                 v-model="passport_series"
                 type="text"
                 class="form-control mb-3"
                 placeholder="Серия паспорта"
             />
+            <div
+                v-if="errorLoaded && errors.passport_series"
+                class="text-danger"
+            >
+                {{ errors.passport_series[0] }}
+            </div>
+
             <input
                 v-model="passport_number"
                 type="text"
                 class="form-control mb-3"
                 placeholder="Номер паспорта"
             />
+            <div
+                v-if="errorLoaded && errors.passport_number"
+                class="text-danger"
+            >
+                {{ errors.passport_number[0] }}
+            </div>
+
             <input
                 v-model="city"
                 type="text"
                 class="form-control mb-3"
                 placeholder="Город"
             />
+            <div v-if="errorLoaded && errors.city" class="text-danger">
+                {{ errors.city[0] }}
+            </div>
+
             <select
                 v-model="blood_group"
                 class="form-control mb-3"
@@ -50,36 +80,55 @@
                     Четвёртая группа крови
                 </option>
             </select>
+            <div v-if="errorLoaded && errors.blood_group" class="text-danger">
+                {{ errors.blood_group[0] }}
+            </div>
+
             <input
                 v-model="email"
                 type="email"
                 class="form-control mb-3"
                 placeholder="Электронная почта"
             />
+            <div v-if="errorLoaded && errors.email" class="text-danger">
+                {{ errors.email[0] }}
+            </div>
+
             <input
                 v-model="password"
                 type="password"
                 class="form-control mb-3"
                 placeholder="Пароль"
             />
+            <div v-if="errorLoaded && errors.password" class="text-danger">
+                {{ errors.password[0] }}
+            </div>
+
             <input
                 v-model="password_confirmation"
                 type="password"
                 class="form-control mb-3"
                 placeholder="Подтвердите пароль"
             />
+            <div
+                v-if="errorLoaded && errors.password_confirmation"
+                class="text-danger"
+            >
+                {{ errors.password_confirmation[0] }}
+            </div>
+
             <input
                 @click.prevent="store"
                 type="submit"
                 class="btn btn-primary"
                 placeholder="Войти"
             />
-            <div v-if="Error" class="text-danger">{{ Error }}</div>
         </div>
     </div>
 </template>
+
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import axios from "axios";
 import router from "../../router";
 import { useAuthStore } from "../../stores/auth";
@@ -98,7 +147,8 @@ let password_confirmation = ref(null);
 let city = ref(null);
 let blood_group = ref(null);
 
-let Error = ref(null);
+let errors = ref({});
+let errorLoaded = ref(false);
 
 function store() {
     console.log(email.value);
@@ -125,33 +175,23 @@ function store() {
             blood_group: blood_group.value,
         })
         .then(function (res) {
-            // localStorage.setItem("access_token", res.data.access_token);
-            // router.push({ name: "user.personal" });
             authStore.login(res.data.access_token);
             router.push({ name: "user.personal" });
-            console.log(email.value);
-            console.log(password.value);
-            console.log(password_confirmation.value);
-            console.log(last_name.value);
-            console.log(first_name.value);
-            console.log(middle_name.value);
-            console.log(passport_series.value);
-            console.log(passport_number.value);
-            console.log(city.value);
-            console.log(blood_group.value);
         })
         .catch((error) => {
+            errorLoaded.value = true;
             if (
                 error.response &&
                 error.response.data &&
-                error.response.data.error
+                error.response.data.errors
             ) {
-                Error.value = error.response.data.error;
+                // Извлекаем данные из прокси-объекта и сохраняем в обычном объекте
+                errors.value = { ...error.response.data.errors };
             } else {
                 console.log(error);
-                Error.value = "An unknown error occurred.";
+                errors.value = { general: ["An unknown error occurred."] };
             }
-            console.log(Error.value);
+            console.log(errors.value);
         });
 }
 </script>

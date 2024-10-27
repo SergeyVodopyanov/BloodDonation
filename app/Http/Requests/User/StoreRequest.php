@@ -30,4 +30,24 @@ class StoreRequest extends FormRequest
             'blood_group' => 'required|string',
         ];
     }
+
+
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Поле email обязательно для заполнения.',
+            'email.email' => 'Поле email должно быть действительным email адресом.',
+            'password.required' => 'Поле пароль обязательно для заполнения.',
+            'password.confirmed' => 'Пароли не совпадают.',
+            'password_confirmation.required' => 'Поле подтверждение пароля обязательно для заполнения.',
+            'last_name.required' => 'Поле фамилия обязательно для заполнения.',
+            'first_name.required' => 'Поле имя обязательно для заполнения.',
+            'passport_series.required' => 'Поле серия паспорта обязательно для заполнения.',
+            'passport_series.unique' => 'Серия паспорта уже используется.',
+            'passport_number.required' => 'Поле номер паспорта обязательно для заполнения.',
+            'passport_number.unique' => 'Номер паспорта уже используется.',
+            'city.required' => 'Поле город обязательно для заполнения.',
+            'blood_group.required' => 'Поле группа крови обязательно для заполнения.',
+        ];
+    }
 }
