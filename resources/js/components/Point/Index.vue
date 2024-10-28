@@ -1,27 +1,51 @@
 <template>
-    <div id="map"></div>
     <div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Название</th>
-                    <th scope="col">Город</th>
-                    <th scope="col">Адрес</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                    v-for="point in points"
-                    :key="point.id"
-                    @click="goToPointShow(point.id)"
-                    style="cursor: pointer"
-                >
-                    <td>{{ point.title }}</td>
-                    <td>{{ point.city }}</td>
-                    <td>{{ point.address }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div id="map"></div>
+
+        <div>
+            <label for="cityFilter">Выберите город:</label>
+            <select id="cityFilter" v-model="selectedCity">
+                <option value="">Все города</option>
+                <option v-for="city in uniqueCities" :key="city" :value="city">
+                    {{ city }}
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="bloodGroupFilter">Выберите группу крови:</label>
+            <select id="bloodGroupFilter" v-model="selectedBloodGroup">
+                <option value="">Все группы</option>
+                <option value="1">Первая группа</option>
+                <option value="2">Вторая группа</option>
+                <option value="3">Третья группа</option>
+                <option value="4">Четвертая группа</option>
+            </select>
+        </div>
+
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Название</th>
+                        <th scope="col">Город</th>
+                        <th scope="col">Адрес</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-for="point in filteredPoints"
+                        :key="point.id"
+                        @click="goToPointShow(point.id)"
+                        style="cursor: pointer"
+                    >
+                        <td>{{ point.title }}</td>
+                        <td>{{ point.city }}</td>
+                        <td>{{ point.address }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
 
@@ -34,8 +58,8 @@ import api from "../../api";
 let router = useRouter();
 
 let points = ref(null);
-let cities = ref([]);
 let selectedCity = ref("");
+let selectedBloodGroup = ref("");
 let isPointsLoaded = ref(false);
 
 getPoints(api);
@@ -47,11 +71,48 @@ function getPoints(api) {
         // },
     }).then((res) => {
         points.value = res.data.data;
-        // console.log(points.value);
         isPointsLoaded.value = true;
-        init(); // Вызываем init только после загрузки данных
+        init();
+        points.value.forEach((point) => {
+            point.first_need =
+                point.first_blood_group_count < point.enough_count;
+            point.second_need =
+                point.second_blood_group_count < point.enough_count;
+            point.third_need =
+                point.third_blood_group_count < point.enough_count;
+            point.fourth_need =
+                point.fourth_blood_group_count < point.enough_count;
+        });
+        console.log(points.value);
     });
 }
+
+const uniqueCities = computed(() => {
+    return [...new Set(points.value?.map((point) => point.city))];
+});
+
+const filteredPoints = computed(() => {
+    if (!points.value) return [];
+
+    return points.value.filter((point) => {
+        const cityMatch =
+            !selectedCity.value || point.city === selectedCity.value;
+
+        let bloodGroupMatch = true;
+        if (selectedBloodGroup.value) {
+            if (selectedBloodGroup.value === "1")
+                bloodGroupMatch = point.first_need;
+            if (selectedBloodGroup.value === "2")
+                bloodGroupMatch = point.second_need;
+            if (selectedBloodGroup.value === "3")
+                bloodGroupMatch = point.third_need;
+            if (selectedBloodGroup.value === "4")
+                bloodGroupMatch = point.fourth_need;
+        }
+
+        return cityMatch && bloodGroupMatch;
+    });
+});
 
 function goToPointShow(pointId) {
     router.push({
@@ -61,7 +122,7 @@ function goToPointShow(pointId) {
 }
 
 function init() {
-    if (!isPointsLoaded.value) return; // Проверяем, загружены ли данные
+    if (!isPointsLoaded.value) return;
 
     ymaps.ready(() => {
         var myMap = new ymaps.Map("map", {
@@ -69,11 +130,9 @@ function init() {
             zoom: 10,
         });
 
-        // Массив с данными о пунктах сдачи крови
         let pointsOnMap = [];
-        for (let i = 0; i < points.value.length; i++) {
-            let pointOnMap = points.value[i];
-            // console.log(pointOnMap);
+        for (let i = 0; i < filteredPoints.value.length; i++) {
+            let pointOnMap = filteredPoints.value[i];
             let [latitude, longitude] = pointOnMap.geolocation.split(", ");
 
             let newPoint = {
@@ -84,7 +143,6 @@ function init() {
             pointsOnMap.push(newPoint);
         }
 
-        // Добавляем метки на карту
         pointsOnMap.forEach(function (pointOnMap) {
             var placemark = new ymaps.Placemark(pointOnMap.coordinates, {
                 balloonContentHeader: pointOnMap.title,
