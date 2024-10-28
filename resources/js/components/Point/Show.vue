@@ -149,7 +149,7 @@
             </div> -->
             <div>
                 <button
-                    :disabled="newDonationDate || showBloodNeedMessage"
+                    :disabled="newDonationDate || showBloodNeedMessage || !user"
                     @click="createDonation"
                     class="btn btn-primary"
                 >
@@ -160,6 +160,9 @@
                 </span>
                 <span v-if="showBloodNeedMessage" class="text-muted ml-2">
                     В данном пункте достаточно крови вашей группы
+                </span>
+                <span v-if="!user" class="text-muted ml-2">
+                    Для записи на сдачу крови необходима авторизация
                 </span>
             </div>
         </div>
@@ -247,39 +250,44 @@ onMounted(() => {
         updateBloodNeed();
         init();
     });
-    axios
-        .get(`/api/auth/user/${user.value.id}/last_donation`, {
-            headers: {
-                authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-        })
-        .then((response) => {
-            lastDonationDateLoaded.value = true;
-            lastDonationDate.value = response.data.date;
-            // console.log(lastDonationDate.value);
-            newDonationDate.value = new Date(lastDonationDate.value);
-            newDonationDate.value.setDate(newDonationDate.value.getDate() + 40);
-
-            const today = new Date();
-            if (newDonationDate.value < today) {
-                newDonationDate.value = null;
-            } else {
-                const year = newDonationDate.value.getFullYear();
-                const month = String(
-                    newDonationDate.value.getMonth() + 1
-                ).padStart(2, "0");
-                const day = String(newDonationDate.value.getDate()).padStart(
-                    2,
-                    "0"
+    if (user.value) {
+        axios
+            .get(`/api/auth/user/${user.value.id}/last_donation`, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem(
+                        "access_token"
+                    )}`,
+                },
+            })
+            .then((response) => {
+                lastDonationDateLoaded.value = true;
+                lastDonationDate.value = response.data.date;
+                // console.log(lastDonationDate.value);
+                newDonationDate.value = new Date(lastDonationDate.value);
+                newDonationDate.value.setDate(
+                    newDonationDate.value.getDate() + 40
                 );
-                newDonationDate.value = `${year}-${month}-${day}`;
-            }
 
-            // console.log(newDonationDate.value);
-        })
-        .catch((error) => {
-            console.error("Error fetching donations:", error);
-        });
+                const today = new Date();
+                if (newDonationDate.value < today) {
+                    newDonationDate.value = null;
+                } else {
+                    const year = newDonationDate.value.getFullYear();
+                    const month = String(
+                        newDonationDate.value.getMonth() + 1
+                    ).padStart(2, "0");
+                    const day = String(
+                        newDonationDate.value.getDate()
+                    ).padStart(2, "0");
+                    newDonationDate.value = `${year}-${month}-${day}`;
+                }
+
+                // console.log(newDonationDate.value);
+            })
+            .catch((error) => {
+                console.error("Error fetching donations:", error);
+            });
+    }
 });
 
 watch(point, () => {
@@ -312,20 +320,24 @@ watchEffect(() => {
 });
 
 function updateBloodNeed() {
-    if (user.value.blood_group === "Первая группа крови") {
-        bloodNeed.value =
-            point.value.first_blood_group_count < point.value.enough_count;
-    } else if (user.value.blood_group === "Вторая группа крови") {
-        bloodNeed.value =
-            point.value.second_blood_group_count < point.value.enough_count;
-    } else if (user.value.blood_group === "Третья группа крови") {
-        bloodNeed.value =
-            point.value.third_blood_group_count < point.value.enough_count;
+    if (user.value) {
+        if (user.value.blood_group === "Первая группа крови") {
+            bloodNeed.value =
+                point.value.first_blood_group_count < point.value.enough_count;
+        } else if (user.value.blood_group === "Вторая группа крови") {
+            bloodNeed.value =
+                point.value.second_blood_group_count < point.value.enough_count;
+        } else if (user.value.blood_group === "Третья группа крови") {
+            bloodNeed.value =
+                point.value.third_blood_group_count < point.value.enough_count;
+        } else {
+            bloodNeed.value =
+                point.value.fourth_blood_group_count < point.value.enough_count;
+        }
+        console.log("bloodNeed.value:", bloodNeed.value);
     } else {
-        bloodNeed.value =
-            point.value.fourth_blood_group_count < point.value.enough_count;
+        bloodNeed.value = true;
     }
-    console.log("bloodNeed.value:", bloodNeed.value);
 }
 
 function createDonation() {
