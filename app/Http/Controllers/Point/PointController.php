@@ -11,41 +11,37 @@ use App\Models\User;
 use App\Http\Resources\User\UserResource;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\PointsImport;
+use App\Services\PointService;
 
 class PointController extends Controller
 {
+    
+    public $service;
+
+    public function __construct(PointService $service){
+        $this->service = $service;
+    }
 
     public function index(){
-        $points = Point::all();
-        // $points = Point::with('donations.user', 'donations.point')->get();
+        $points = $this->service->index();
         return PointResource::collection($points);
     }
 
     public function show($id){
-        // $point = Point::with('donations.user', 'donations.point')->find($id);
-        $point = Point::find($id);
+        $point = $this->service->show($id); 
         return new PointResource($point);
     }
 
     public function getAvailableTimes($id, Request $request){
-        $point = Point::find($id);
         $selectedDate = Carbon::parse($request->input('date'));
-        $takenTimes = $point->donations()
-            ->whereDate('date', $selectedDate)
-            ->pluck('time')
-            ->toArray();
+        $takenTimes = $this->service->getAvailableTimes($id, $selectedDate);
         return response()->json($takenTimes);
-
     }
 
     public function import(Request $request)
     {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls',
-        ]);
-
-        Excel::import(new PointsImport, $request->file('file'));
-
-        return response()->json(['message' => 'Данные успешно импортированы']);
+        $request->validate(['file' => 'required|mimes:xlsx,xls',]);
+        $this->service->import($request);
+        return response()->json([], 200);
     }
 }

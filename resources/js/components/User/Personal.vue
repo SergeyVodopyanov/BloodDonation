@@ -147,9 +147,10 @@ onMounted(() => {
             },
         })
         .then((response) => {
+            console.log(response);
             isDonationsLoaded.value = true;
             // console.log(response.data);
-            donations.value = response.data;
+            donations.value = response.data.data;
             // console.log(donations.value);
         })
         .catch((error) => {
@@ -163,7 +164,7 @@ onMounted(() => {
         })
         .then((response) => {
             lastDonationDateLoaded.value = true;
-            lastDonationDate.value = response.data.date;
+            lastDonationDate.value = response.data.data.date;
             // console.log(lastDonationDate.value);
             newDonationDate.value = new Date(lastDonationDate.value);
             newDonationDate.value.setDate(newDonationDate.value.getDate() + 40);

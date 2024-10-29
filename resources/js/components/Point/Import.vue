@@ -26,7 +26,7 @@ const uploadFile = () => {
             },
         })
         .then((response) => {
-            alert(response.data.message);
+            alert("Пункты сдачи крвои загружены");
         })
         .catch((error) => {
             console.error(error);

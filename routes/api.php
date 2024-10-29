@@ -8,7 +8,8 @@ use App\Http\Controllers\AuthController;
 // })->middleware('auth:sanctum');
 
 Route::group(['prefix' => 'users'], function () {
-        Route::post('/', App\Http\Controllers\User\StoreController::class);
+        // Route::post('/', App\Http\Controllers\User\StoreController::class);
+        Route::post('/', [App\Http\Controllers\User\UserController::class, 'store']);
 });
 
 Route::group([
@@ -21,10 +22,11 @@ Route::group([
     Route::post('refresh', [App\Http\Controllers\AuthController::class, 'refresh']);
     Route::post('me', [App\Http\Controllers\AuthController::class, 'me']);
     Route::group(['middleware' => 'jwt.auth'], function () {
-        Route::get('user', [AuthController::class, 'getUser']);
-        Route::get('user/{user_id}/donations', [App\Http\Controllers\User\UserController::class, 'getUserDonations']);
-        Route::get('user/{user_id}/last_donation', [App\Http\Controllers\User\UserController::class, 'getLastDonation']);
-
+        Route::group(['prefix' => 'user'], function () {
+            Route::get('/', [AuthController::class, 'getUser']);
+            Route::get('/{user_id}/donations', [App\Http\Controllers\User\UserController::class, 'getUserDonations']);
+            Route::get('/{user_id}/last_donation', [App\Http\Controllers\User\UserController::class, 'getLastDonation']);
+        });
     });
 });
 
