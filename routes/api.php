@@ -10,10 +10,6 @@ use App\Http\Controllers\AuthController;
 Route::group(['prefix' => 'users'], function () {
         Route::post('/', App\Http\Controllers\User\StoreController::class);
 });
-Route::group(['prefix' => 'bloodDonations'], function () {
-    Route::post('/', App\Http\Controllers\BloodDonation\StoreController::class);
-});
-
 
 Route::group([
     'middleware' => 'api',
@@ -34,10 +30,7 @@ Route::group([
 
 // Route::get('/user/{user_id}/donations', [App\Http\Controllers\User\UserController::class, 'getUserDonations']);
 
-Route::group(['prefix' => 'stations'], function () {
-    Route::get('/', App\Http\Controllers\Station\IndexController::class);
-    Route::get('/{id}', App\Http\Controllers\Station\ShowController::class);
-});
+
 
 Route::group(['prefix' => 'points'], function () {
     Route::get('/', [App\Http\Controllers\Point\PointController::class, 'index']);
