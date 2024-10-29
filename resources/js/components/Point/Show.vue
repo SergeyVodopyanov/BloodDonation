@@ -115,10 +115,6 @@
                 <label for="date">Выберите дату:</label>
                 <flat-pickr v-model="selectedDate" :config="datePickerConfig" />
             </div>
-            <!-- <div class="form-group">
-                <label for="time">Выберите время:</label>
-                <flat-pickr v-model="selectedTime" :config="timePickerConfig" />
-            </div> -->
             <div class="form-group w-25">
                 <label for="timePeriod">Выберите время:</label>
                 <select
@@ -135,27 +131,30 @@
                     </option>
                 </select>
             </div>
-            <!-- <div v-if="isPointLoaded">
-                <button
-                    @click="createDonation"
-                    :disabled="bloodNeed.value"
-                    class="btn btn-primary"
-                >
-                    Записаться на сдачу крови
-                </button>
-                <span v-if="bloodNeed.value === false" class="text-muted ml-2">
-                    В данном пункте достаточно крови вашей группы
-                </span>
-            </div> -->
             <div>
+                <!-- <button
+                    :disabled="
+                        (newDonationDate && newDonationDate != 'NaN-NaN-NaN') ||
+                        showBloodNeedMessage ||
+                        !user
+                    "
+                    @click="createDonation"
+                    class="btn btn-primary"
+                >
+                    Записаться на сдачу крови
+                </button> -->
                 <button
-                    :disabled="newDonationDate || showBloodNeedMessage || !user"
+                    :disabled="showBloodNeedMessage || !user"
                     @click="createDonation"
                     class="btn btn-primary"
                 >
                     Записаться на сдачу крови
                 </button>
-                <span v-if="newDonationDate" class="text-muted ml-2">
+
+                <span
+                    v-if="newDonationDate && newDonationDate != 'NaN-NaN-NaN'"
+                    class="text-muted ml-2"
+                >
                     Ближаяшая досупная дата сдачи крови: {{ newDonationDate }}
                 </span>
                 <span v-if="showBloodNeedMessage" class="text-muted ml-2">
@@ -165,6 +164,9 @@
                     Для записи на сдачу крови необходима авторизация
                 </span>
             </div>
+        </div>
+        <div v-if="showSuccessMessage" class="alert alert-success mt-3">
+            Вы записаны на сдачу крови!
         </div>
     </div>
 </template>
@@ -182,8 +184,6 @@ const route = useRoute();
 const authStore = useAuthStore();
 
 let user = computed(() => authStore.user);
-
-// console.log(user.value.blood_group);
 
 const point = ref(null);
 
@@ -242,6 +242,8 @@ const datePickerConfig = {
     enableTime: false,
 };
 
+const showSuccessMessage = ref(false);
+
 onMounted(() => {
     const pointId = route.params.id;
     api.get(`/api/points/${pointId}`).then((res) => {
@@ -262,7 +264,6 @@ onMounted(() => {
             .then((response) => {
                 lastDonationDateLoaded.value = true;
                 lastDonationDate.value = response.data.date;
-                // console.log(lastDonationDate.value);
                 newDonationDate.value = new Date(lastDonationDate.value);
                 newDonationDate.value.setDate(
                     newDonationDate.value.getDate() + 40
@@ -281,8 +282,6 @@ onMounted(() => {
                     ).padStart(2, "0");
                     newDonationDate.value = `${year}-${month}-${day}`;
                 }
-
-                // console.log(newDonationDate.value);
             })
             .catch((error) => {
                 console.error("Error fetching donations:", error);
@@ -308,8 +307,6 @@ watchEffect(() => {
                 availableTimes.value = allTimes.filter(
                     (item) => !takenTimes.value.includes(item)
                 );
-                // console.log("занятое время " + takenTimes.value);
-                // console.log("свободное время " + availableTimes.value);
             })
             .catch((error) => {
                 console.error("Ошибка при получении доступных времен:", error);
@@ -334,7 +331,6 @@ function updateBloodNeed() {
             bloodNeed.value =
                 point.value.fourth_blood_group_count < point.value.enough_count;
         }
-        console.log("bloodNeed.value:", bloodNeed.value);
     } else {
         bloodNeed.value = true;
     }
@@ -351,11 +347,6 @@ function createDonation() {
     const userId = user.value.id;
     const pointId = point.value.id;
 
-    // console.log("id пользователя:", userId);
-    // console.log("id пункта сдачи крови:", pointId);
-    // console.log("Дата:", selectedDate.value);
-    // console.log("Время:", selectedTime.value);
-
     axios
         .post("/api/donations", {
             user_id: userId,
@@ -364,7 +355,7 @@ function createDonation() {
             time: selectedTime.value,
         })
         .then((response) => {
-            // console.log(response.data);
+            showSuccessMessage.value = true;
         })
         .catch((error) => {
             console.error(error);
@@ -429,5 +420,9 @@ label {
 
 .btn-primary {
     margin-top: 10px;
+}
+
+.alert-success {
+    margin-top: 20px;
 }
 </style>

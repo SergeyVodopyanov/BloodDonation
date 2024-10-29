@@ -85,8 +85,10 @@
             <div class="row justify-content-center mt-5">
                 <div class="card shadow-sm p-4">
                     <h4 class="mb-4">История донаций</h4>
-                    После последней донации должно пройти 40 дней. Ближайший
-                    день для новой донации: {{ newDonationDate }}
+                    <span v-if="newDonationDate != 'NaN-NaN-NaN'">
+                        После последней донации должно пройти 40 дней. Ближайший
+                        день для новой донации: {{ newDonationDate }}
+                    </span>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -176,6 +178,7 @@ onMounted(() => {
             );
             newDonationDate.value = `${year}-${month}-${day}`;
             // console.log(newDonationDate.value);
+            console.log(newDonationDate.value);
         })
         .catch((error) => {
             console.error("Error fetching donations:", error);

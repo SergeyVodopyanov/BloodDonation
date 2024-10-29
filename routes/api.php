@@ -48,4 +48,5 @@ Route::group(['prefix' => 'points'], function () {
 
 Route::post('/donations', [App\Http\Controllers\Donation\DonationController::class, 'store']);
 
+Route::get('/users/honorary_donors', [App\Http\Controllers\User\UserController::class, 'getHonoraryDonors']);
 

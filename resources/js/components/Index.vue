@@ -9,6 +9,13 @@
                         >Пункты сдачи крови</router-link
                     >
                 </div>
+                <div class="ms-auto me-auto">
+                    <router-link
+                        :to="{ name: 'honorary_donors' }"
+                        class="navbar-brand"
+                        >Почётные доноры</router-link
+                    >
+                </div>
                 <button
                     class="navbar-toggler"
                     type="button"

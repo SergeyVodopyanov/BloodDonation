@@ -36,6 +36,12 @@ const router = createRouter({
             component: () => import("./components/User/Personal.vue"),
             name: "user.personal",
         },
+
+        {
+            path: "/honorary_donors",
+            component: () => import("./components/HonoraryDonors/Index.vue"),
+            name: "honorary_donors",
+        },
         {
             //Если в адресную строку вбита ерунда по типу "/users/personal321312312314fscs"
             path: "/:catchAll(.*)",
@@ -49,9 +55,9 @@ router.beforeEach((to, from, next) => {
     const publicRoutes = [
         "point.index",
         "point.show",
-        "fruit.index",
         "user.login",
         "user.registration",
+        "honorary_donors",
     ];
 
     if (!accessToken && !publicRoutes.includes(to.name)) {
