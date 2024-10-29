@@ -151,7 +151,12 @@ onMounted(() => {
             isDonationsLoaded.value = true;
             // console.log(response.data);
             donations.value = response.data.data;
-            // console.log(donations.value);
+            donations.value.sort((a, b) => {
+                const dateA = new Date(`${a.date}T${a.time}`);
+                const dateB = new Date(`${b.date}T${b.time}`);
+                return dateB - dateA;
+            });
+            console.log(donations.value);
         })
         .catch((error) => {
             console.error("Error fetching donations:", error);
