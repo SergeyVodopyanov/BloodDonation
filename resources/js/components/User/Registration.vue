@@ -150,19 +150,20 @@ let blood_group = ref(null);
 let errors = ref({});
 let errorLoaded = ref(false);
 
-function store() {
-    console.log(email.value);
-    console.log(password.value);
-    console.log(password_confirmation.value);
-    console.log(last_name.value);
-    console.log(first_name.value);
-    console.log(middle_name.value);
-    console.log(passport_series.value);
-    console.log(passport_number.value);
-    console.log(city.value);
-    console.log(blood_group.value);
-    axios
-        .post("/api/users", {
+async function store() {
+    // console.log(email.value);
+    // console.log(password.value);
+    // console.log(password_confirmation.value);
+    // console.log(last_name.value);
+    // console.log(first_name.value);
+    // console.log(middle_name.value);
+    // console.log(passport_series.value);
+    // console.log(passport_number.value);
+    // console.log(city.value);
+    // console.log(blood_group.value);
+
+    try {
+        const response = await axios.post("/api/users", {
             email: email.value,
             password: password.value,
             password_confirmation: password_confirmation.value,
@@ -173,25 +174,23 @@ function store() {
             passport_number: passport_number.value,
             city: city.value,
             blood_group: blood_group.value,
-        })
-        .then(function (res) {
-            authStore.login(res.data.access_token);
-            router.push({ name: "user.personal" });
-        })
-        .catch((error) => {
-            errorLoaded.value = true;
-            if (
-                error.response &&
-                error.response.data &&
-                error.response.data.errors
-            ) {
-                // Извлекаем данные из прокси-объекта и сохраняем в обычном объекте
-                errors.value = { ...error.response.data.errors };
-            } else {
-                console.log(error);
-                errors.value = { general: ["An unknown error occurred."] };
-            }
-            console.log(errors.value);
         });
+
+        authStore.login(response.data.access_token);
+        await router.push({ name: "point.index" });
+    } catch (error) {
+        errorLoaded.value = true;
+        if (
+            error.response &&
+            error.response.data &&
+            error.response.data.errors
+        ) {
+            errors.value = { ...error.response.data.errors };
+        } else {
+            console.log(error);
+            errors.value = { general: ["An unknown error occurred."] };
+        }
+        console.log(errors.value);
+    }
 }
 </script>
