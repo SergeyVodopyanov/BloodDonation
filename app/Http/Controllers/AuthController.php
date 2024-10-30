@@ -29,26 +29,24 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
-{
-    // Валидация входных данных
-    $validator = Validator::make($request->all(), [
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    // Если валидация не пройдена, возвращаем ошибки
-    if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()], 422);
+        if ($validator->fails()) {
+           return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $credentials = $request->only('email', 'password');
+
+        if ($token = $this->guard()->attempt($credentials)) {
+           return $this->respondWithToken($token);
+        }
+
+        return response()->json(['error' => 'Wrong password or email'], 401);
     }
-
-    $credentials = $request->only('email', 'password');
-
-    if ($token = $this->guard()->attempt($credentials)) {
-        return $this->respondWithToken($token);
-    }
-
-    return response()->json(['error' => 'Wrong password or email'], 401);
-}
     /**
      * Get the authenticated User
      *

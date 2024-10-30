@@ -44,9 +44,9 @@ let honorary_donors = ref(null);
 let honoraryDonorsLoaded = ref(null);
 
 axios.get("/api/users/honorary_donors").then((res) => {
-    console.log(res);
+    // console.log(res);
     honorary_donors.value = res.data.data;
     honoraryDonorsLoaded = true;
-    console.log(honorary_donors.value);
+    // console.log(honorary_donors.value);
 });
 </script>

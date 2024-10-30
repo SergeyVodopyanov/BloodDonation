@@ -28,7 +28,9 @@ class UserController extends Controller
 
     public function getLastDonation($user_id){
         $donation = $this->service->getLastDonation($user_id);
-        return new DonationResource($donation);
+        if ($donation){
+            return new DonationResource($donation);
+        }
     }
 
     public function getHonoraryDonors(){

@@ -85,7 +85,11 @@
             <div class="row justify-content-center mt-5">
                 <div class="card shadow-sm p-4">
                     <h4 class="mb-4">История донаций</h4>
-                    <span v-if="newDonationDate != 'NaN-NaN-NaN'">
+                    <span
+                        v-if="
+                            newDonationDate && newDonationDate != 'NaN-NaN-NaN'
+                        "
+                    >
                         После последней донации должно пройти 40 дней. Ближайший
                         день для новой донации: {{ newDonationDate }}
                     </span>
@@ -147,7 +151,7 @@ onMounted(() => {
             },
         })
         .then((response) => {
-            console.log(response);
+            // console.log(response);
             isDonationsLoaded.value = true;
             // console.log(response.data);
             donations.value = response.data.data;
@@ -156,7 +160,7 @@ onMounted(() => {
                 const dateB = new Date(`${b.date}T${b.time}`);
                 return dateB - dateA;
             });
-            console.log(donations.value);
+            // console.log(donations.value);
         })
         .catch((error) => {
             console.error("Error fetching donations:", error);
@@ -168,23 +172,25 @@ onMounted(() => {
             },
         })
         .then((response) => {
-            lastDonationDateLoaded.value = true;
-            lastDonationDate.value = response.data.data.date;
-            // console.log(lastDonationDate.value);
-            newDonationDate.value = new Date(lastDonationDate.value);
-            newDonationDate.value.setDate(newDonationDate.value.getDate() + 60);
-            const year = newDonationDate.value.getFullYear();
-            const month = String(newDonationDate.value.getMonth() + 1).padStart(
-                2,
-                "0"
-            );
-            const day = String(newDonationDate.value.getDate()).padStart(
-                2,
-                "0"
-            );
-            newDonationDate.value = `${year}-${month}-${day}`;
-            // console.log(newDonationDate.value);
-            console.log(newDonationDate.value);
+            if (response.data.data) {
+                lastDonationDateLoaded.value = true;
+                lastDonationDate.value = response.data.data.date;
+                // console.log(lastDonationDate.value);
+                newDonationDate.value = new Date(lastDonationDate.value);
+                newDonationDate.value.setDate(
+                    newDonationDate.value.getDate() + 60
+                );
+                const year = newDonationDate.value.getFullYear();
+                const month = String(
+                    newDonationDate.value.getMonth() + 1
+                ).padStart(2, "0");
+                const day = String(newDonationDate.value.getDate()).padStart(
+                    2,
+                    "0"
+                );
+                newDonationDate.value = `${year}-${month}-${day}`;
+                // console.log(newDonationDate.value);
+            }
         })
         .catch((error) => {
             console.error("Error fetching donations:", error);

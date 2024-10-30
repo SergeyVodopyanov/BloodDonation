@@ -16,9 +16,7 @@ class PointsImport implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
-        $Point = Point::where('city', $row['gorod'])
-                                ->where('address', $row['adres'])
-                                ->first();
+        $Point = Point::where('city', $row['gorod'])->where('address', $row['adres'])->first();
 
         if ($Point) {
             $Point->update([

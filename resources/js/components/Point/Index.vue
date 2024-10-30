@@ -83,7 +83,7 @@ function getPoints(api) {
             point.fourth_need =
                 point.fourth_blood_group_count < point.enough_count;
         });
-        console.log(points.value);
+        // console.log(points.value);
     });
 }
 
