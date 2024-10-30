@@ -13,25 +13,23 @@ return new class extends Migration
     public function up(): void
     {
         DB::unprepared('
-        CREATE OR REPLACE FUNCTION update_honorary_donor()
-        RETURNS TRIGGER AS $$
-        BEGIN
-        IF (SELECT COUNT(*) FROM donations WHERE user_id = NEW.user_id) = 40 THEN
-        UPDATE users
-        SET honorary_donor = NEW.date::timestamp + NEW.time::time
-        WHERE id = NEW.user_id;
-        END IF;
-        RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
-    ');
+            CREATE OR REPLACE FUNCTION update_honorary_donor()
+            RETURNS TRIGGER AS $$
+            BEGIN
+            IF (SELECT COUNT(*) FROM donations WHERE user_id = NEW.user_id) = 40 THEN
+            UPDATE users SET honorary_donor = NEW.date::timestamp + NEW.time::time WHERE id = NEW.user_id;
+            END IF;
+            RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+        ');
 
-    DB::unprepared('
-        CREATE TRIGGER check_donations_trigger
-        AFTER INSERT ON donations
-        FOR EACH ROW
-        EXECUTE FUNCTION update_honorary_donor();
-    ');
+        DB::unprepared('
+            CREATE TRIGGER check_donations_trigger
+            AFTER INSERT ON donations
+            FOR EACH ROW
+            EXECUTE FUNCTION update_honorary_donor();
+        ');
     }
 
     /**

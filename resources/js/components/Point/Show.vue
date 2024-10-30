@@ -132,7 +132,7 @@
                 </select>
             </div>
             <div>
-                <!-- <button
+                <button
                     :disabled="
                         (newDonationDate && newDonationDate != 'NaN-NaN-NaN') ||
                         showBloodNeedMessage ||
@@ -142,14 +142,14 @@
                     class="btn btn-primary"
                 >
                     Записаться на сдачу крови
-                </button> -->
-                <button
+                </button>
+                <!-- <button
                     :disabled="showBloodNeedMessage || !user"
                     @click="createDonation"
                     class="btn btn-primary"
                 >
                     Записаться на сдачу крови
-                </button>
+                </button> -->
 
                 <span
                     v-if="newDonationDate && newDonationDate != 'NaN-NaN-NaN'"
@@ -266,7 +266,7 @@ onMounted(() => {
                 lastDonationDate.value = response.data.date;
                 newDonationDate.value = new Date(lastDonationDate.value);
                 newDonationDate.value.setDate(
-                    newDonationDate.value.getDate() + 40
+                    newDonationDate.value.getDate() + 60
                 );
 
                 const today = new Date();
@@ -358,7 +358,14 @@ function createDonation() {
             showSuccessMessage.value = true;
         })
         .catch((error) => {
-            console.error(error);
+            if (error.response && error.response.status === 422) {
+                alert(error.response.data.message);
+            } else if (error.response && error.response.status === 500) {
+                alert("После последней донации должно пройти 2 месяца");
+                console.log(error);
+            } else {
+                console.error(error);
+            }
         });
 }
 

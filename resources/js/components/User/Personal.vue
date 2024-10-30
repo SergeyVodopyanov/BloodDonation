@@ -172,7 +172,7 @@ onMounted(() => {
             lastDonationDate.value = response.data.data.date;
             // console.log(lastDonationDate.value);
             newDonationDate.value = new Date(lastDonationDate.value);
-            newDonationDate.value.setDate(newDonationDate.value.getDate() + 40);
+            newDonationDate.value.setDate(newDonationDate.value.getDate() + 60);
             const year = newDonationDate.value.getFullYear();
             const month = String(newDonationDate.value.getMonth() + 1).padStart(
                 2,
