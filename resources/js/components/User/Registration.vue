@@ -2,6 +2,15 @@
     <div class="d-flex justify-content-center align-items-center vh-100">
         <div class="w-25">
             <input
+                @change="handleImageChange"
+                type="file"
+                class="form-control mb-3"
+                accept="image/*"
+            />
+            <div v-if="errorLoaded && errors.image" class="text-danger">
+                {{ errors.image[0] }}
+            </div>
+            <input
                 v-model="last_name"
                 type="text"
                 class="form-control bt-3 mb-3"
@@ -146,36 +155,31 @@ let password = ref(null);
 let password_confirmation = ref(null);
 let city = ref(null);
 let blood_group = ref(null);
+let image = ref(null);
 
 let errors = ref({});
 let errorLoaded = ref(false);
 
 async function store() {
-    // console.log(email.value);
-    // console.log(password.value);
-    // console.log(password_confirmation.value);
-    // console.log(last_name.value);
-    // console.log(first_name.value);
-    // console.log(middle_name.value);
-    // console.log(passport_series.value);
-    // console.log(passport_number.value);
-    // console.log(city.value);
-    // console.log(blood_group.value);
+    const formData = new FormData();
+    formData.append("email", email.value);
+    formData.append("password", password.value);
+    formData.append("password_confirmation", password_confirmation.value);
+    formData.append("last_name", last_name.value);
+    formData.append("first_name", first_name.value);
+    formData.append("middle_name", middle_name.value);
+    formData.append("passport_series", passport_series.value);
+    formData.append("passport_number", passport_number.value);
+    formData.append("city", city.value);
+    formData.append("blood_group", blood_group.value);
+    formData.append("image", image.value);
 
     try {
-        const response = await axios.post("/api/users", {
-            email: email.value,
-            password: password.value,
-            password_confirmation: password_confirmation.value,
-            last_name: last_name.value,
-            first_name: first_name.value,
-            middle_name: middle_name.value,
-            passport_series: passport_series.value,
-            passport_number: passport_number.value,
-            city: city.value,
-            blood_group: blood_group.value,
+        const response = await axios.post("/api/users", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
         });
-
         authStore.login(response.data.access_token);
         await router.push({ name: "point.index" });
     } catch (error) {
@@ -192,5 +196,9 @@ async function store() {
         }
         console.log(errors.value);
     }
+}
+
+function handleImageChange(event) {
+    image.value = event.target.files[0];
 }
 </script>

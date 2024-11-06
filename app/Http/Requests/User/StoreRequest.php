@@ -1,6 +1,9 @@
 <?php
+
 namespace App\Http\Requests\User;
+
 use Illuminate\Foundation\Http\FormRequest;
+
 class StoreRequest extends FormRequest
 {
     /**
@@ -18,6 +21,7 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'image' => 'nullable|file',
             'email' => 'required|email',
             'password' => 'required|string|confirmed',
             'password_confirmation' => 'required|string',

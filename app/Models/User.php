@@ -31,6 +31,7 @@ class User extends Authenticatable implements JWTSubject
         'blood_group',
         'city',
         'honorory_donor',
+        'image_url',
     ];
 
     public function donations()
