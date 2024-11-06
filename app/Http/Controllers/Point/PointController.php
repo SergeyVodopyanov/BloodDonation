@@ -12,27 +12,32 @@ use App\Http\Resources\User\UserResource;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\PointsImport;
 use App\Services\PointService;
+use App\Http\Requests\Point\StoreRequest;
 
 class PointController extends Controller
 {
-    
+
     public $service;
 
-    public function __construct(PointService $service){
+    public function __construct(PointService $service)
+    {
         $this->service = $service;
     }
 
-    public function index(){
+    public function index()
+    {
         $points = $this->service->index();
         return PointResource::collection($points);
     }
 
-    public function show($id){
-        $point = $this->service->show($id); 
+    public function show($id)
+    {
+        $point = $this->service->show($id);
         return new PointResource($point);
     }
 
-    public function getAvailableTimes($id, Request $request){
+    public function getAvailableTimes($id, Request $request)
+    {
         $selectedDate = Carbon::parse($request->input('date'));
         $takenTimes = $this->service->getAvailableTimes($id, $selectedDate);
         return response()->json($takenTimes);
@@ -42,6 +47,13 @@ class PointController extends Controller
     {
         $request->validate(['file' => 'required|mimes:xlsx,xls',]);
         $this->service->import($request);
+        return response()->json([], 200);
+    }
+
+    public function store(StoreRequest $request)
+    {
+        $data = $request->validated();
+        $this->service->store($data);
         return response()->json([], 200);
     }
 }
