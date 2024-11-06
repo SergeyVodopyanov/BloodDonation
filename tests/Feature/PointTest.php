@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Point;
 use Illuminate\Support\Facades\Log;
+use App\Http\Resources\Point\PointResource;
 
 class PointTest extends TestCase
 {
@@ -49,6 +50,7 @@ class PointTest extends TestCase
         $this->assertEquals($data['enough_count'], $point->enough_count);
     }
 
+    /** @test */
     public function test_point_can_be_updated()
     {
         $this->withoutExceptionHandling();
@@ -84,5 +86,22 @@ class PointTest extends TestCase
         $this->assertEquals($data['fourth_blood_group_count'], $updatedPoint->fourth_blood_group_count);
         $this->assertEquals($data['enough_count'], $updatedPoint->enough_count);
         $this->assertEquals($point->id, $updatedPoint->id);
+    }
+
+    /** @test */
+    public function response_for_route_points_index_is_pointresource_collection()
+    {
+        $this->withoutExceptionHandling();
+
+        $points = Point::factory(10)->create();
+        $response = $this->get('/api/points');
+        Log::info('Список П.С.К., возвращаемый из контроллера', $response->json());
+
+        // Преобразуем коллекцию моделей в JSON-формат с помощью ресурса
+        $expected = PointResource::collection($points)->response()->getData(true);
+        Log::info('Список П.С.К. в виде коллекции', $expected);
+
+        // Сравниваем JSON-ответ с ожидаемым результатом
+        $response->assertJson($expected);
     }
 }
