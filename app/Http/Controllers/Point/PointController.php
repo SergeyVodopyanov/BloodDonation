@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\PointsImport;
 use App\Services\PointService;
 use App\Http\Requests\Point\StoreRequest;
+use App\Http\Requests\Point\UpdateRequest;
 
 class PointController extends Controller
 {
@@ -55,5 +56,11 @@ class PointController extends Controller
         $data = $request->validated();
         $this->service->store($data);
         return response()->json([], 200);
+    }
+
+    public function update(UpdateRequest $request, Point $point)
+    {
+        $data = $request->validated();
+        $point->update($data);
     }
 }

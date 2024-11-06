@@ -27,6 +27,7 @@ Route::group([
             Route::get('/', [AuthController::class, 'getUser']);
             Route::get('/{user_id}/donations', [App\Http\Controllers\User\UserController::class, 'getUserDonations']);
             Route::get('/{user_id}/last_donation', [App\Http\Controllers\User\UserController::class, 'getLastDonation']);
+            Route::patch('/{user}', [App\Http\Controllers\User\UserController::class, 'update']);
         });
     });
 });
@@ -41,6 +42,7 @@ Route::group(['prefix' => 'points'], function () {
     Route::get('/{id}', [App\Http\Controllers\Point\PointController::class, 'show']);
     Route::get('/{id}/available_times', [App\Http\Controllers\Point\PointController::class, 'getAvailableTimes']);
     Route::post('/import', [App\Http\Controllers\Point\PointController::class, 'import']);
+    Route::patch('/{point}', [App\Http\Controllers\Point\PointController::class, 'update']);
 });
 
 Route::post('/donations', [App\Http\Controllers\Donation\DonationController::class, 'store']);

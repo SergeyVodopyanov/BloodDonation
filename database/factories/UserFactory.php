@@ -23,8 +23,15 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $bloodGroups = ['Первая группа крови', 'Вторая группа крови', 'Третья группа крови', 'Четвёртая группа крови'];
         return [
-            'name' => fake()->name(),
+            'last_name' => fake()->lastName,
+            'first_name' => fake()->firstName,
+            'middle_name' => fake()->firstName,
+            'passport_series' => $this->faker->numberBetween(1000, 9999),
+            'passport_number' => $this->faker->numberBetween(100000, 999999),
+            'blood_group' => $this->faker->randomElement($bloodGroups),
+            'city' => fake()->city,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
@@ -37,7 +44,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

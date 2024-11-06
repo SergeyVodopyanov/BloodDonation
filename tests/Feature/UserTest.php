@@ -56,7 +56,6 @@ class UserTest extends TestCase
         $this->assertEquals($data['passport_series'], $user->passport_series);
         $this->assertEquals($data['passport_number'], $user->passport_number);
         $this->assertEquals($data['city'], $user->city);
-        // $this->assertEquals('storage/app/images/' . $file->hashName(), $user->image_url);
         $this->assertEquals('images/' . $file->hashName(), $user->image_url);
 
 
@@ -574,4 +573,39 @@ class UserTest extends TestCase
 
         $response->assertInvalid('blood_group');
     }
+
+    // /** @test */
+    // public function user_can_be_apdated()
+    // {
+    //     $this->withoutExceptionHandling();
+    //     $user = User::factory()->create();
+    //     $file = File::create('my_image.png');
+    //     $data = [
+    //         'email' => 'editedivanov@bk.ru',
+    //         'password' => 'editedivanov123321',
+    //         'password_confirmation' => 'editedivanov123321',
+    //         'last_name' => 'editedivanovИванов',
+    //         'first_name' => 'editedivanovИван',
+    //         'middle_name' => 'editedivanovИванович',
+    //         'passport_series' => 123423232,
+    //         'passport_number' => 567890232323,
+    //         'city' => 'editedivanovВладивосток',
+    //         'blood_group' => 'Третья группа крови',
+    //         'image' => $file,
+    //     ];
+
+    //     $response = $this->patch('api/users/' . $user->id, $data);
+    //     $response->assertOk();
+    //     $updatedUser = User::first();
+
+    //     $this->assertEquals($data['email'], $user->email);
+    //     $this->assertEquals($data['last_name'], $user->last_name);
+    //     $this->assertEquals($data['first_name'], $user->first_name);
+    //     $this->assertEquals($data['middle_name'], $user->middle_name);
+    //     $this->assertEquals($data['passport_series'], $user->passport_series);
+    //     $this->assertEquals($data['passport_number'], $user->passport_number);
+    //     $this->assertEquals($data['city'], $user->city);
+    //     $this->assertEquals('images/' . $file->hashName(), $user->image_url);
+    //     $this->assertEquals($user->id, $updatedUser->id);
+    // }
 }
