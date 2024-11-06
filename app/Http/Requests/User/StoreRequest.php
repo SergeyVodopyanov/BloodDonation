@@ -22,14 +22,14 @@ class StoreRequest extends FormRequest
     {
         return [
             'image' => 'nullable|file',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users',
             'password' => 'required|string|confirmed',
             'password_confirmation' => 'required|string',
             'last_name' => 'required|string',
             'first_name' => 'required|string',
             'middle_name' => 'nullable|string',
-            'passport_series' => 'required|string|unique:users',
-            'passport_number' => 'required|string|unique:users',
+            'passport_series' => 'required|integer',
+            'passport_number' => 'required|integer',
             'city' => 'required|string',
             'blood_group' => 'required|string',
         ];

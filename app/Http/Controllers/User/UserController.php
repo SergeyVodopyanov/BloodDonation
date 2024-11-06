@@ -48,10 +48,11 @@ class UserController extends Controller
     public function store(StoreRequest $request)
     {
         $data = $request->validated();
-        // $path = 'storage/app/' . Storage::disk('local')->put('/images', $data['image']);
-        $path = Storage::disk('local')->put('/images', $data['image']);
+        if (!empty($data['image'])) {
+            $path = Storage::disk('local')->put('/images', $data['image']);
+            $data['image_url'] = $path;
+        }
 
-        $data['image_url'] = $path;
         unset($data['image']);
         //        dd($path);
 
