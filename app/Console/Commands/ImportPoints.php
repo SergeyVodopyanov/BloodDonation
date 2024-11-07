@@ -15,7 +15,7 @@ class ImportPoints extends Command
      *
      * @var string
      */
-    protected $signature = 'app:import-points';
+    protected $signature = 'command:import-points';
 
     /**
      * The console command description.
@@ -29,16 +29,13 @@ class ImportPoints extends Command
      */
     public function handle(PointService $service)
     {
-        // Путь к файлу, который нужно импортировать
         $filePath = base_path('app/Imports/Points.xlsx');
 
-        // Проверка наличия файла
         if (!file_exists($filePath)) {
             $this->error('File not found: ' . $filePath);
             return 1;
         }
 
-        // Вызываем метод импорта
         $service->command_import($filePath);
 
         $this->info('Points imported successfully.');

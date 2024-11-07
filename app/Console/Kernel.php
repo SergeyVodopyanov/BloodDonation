@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Console\Commands\ImportPoints;
+use App\Console\Commands\TestCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -12,9 +14,10 @@ class Kernel extends ConsoleKernel
      *
      * @var array
      */
-    protected $commands = [
-        \App\Console\Commands\ImportPoints::class,
-    ];
+    // protected $commands = [
+    //     // ImportPoints::class,
+    //     TestCommand::class
+    // ];
 
     /**
      * Define the application's command schedule.
@@ -24,8 +27,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Запуск команды каждый день в 2:00 ночи
-        $schedule->command('app:import-points')->everyThreeMinutes();
+        $schedule->command('command:import-points')->everyMinute();
+        $schedule->command('command:test-command')->everyMinute();
     }
 
     /**
