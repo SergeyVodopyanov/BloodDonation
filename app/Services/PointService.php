@@ -32,6 +32,11 @@ class PointService
         Excel::import(new PointsImport, $request->file('file'));
     }
 
+    public function command_import($filePath)
+    {
+        Excel::import(new PointsImport, $filePath);
+    }
+
     public function store($data)
     {
         Point::create($data);

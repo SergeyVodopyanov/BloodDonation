@@ -55,6 +55,7 @@ class PointTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $point = Point::factory()->create();
+
         // Log::info('П.С.К. из фабрики', $point->toArray());
 
 
