@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // Запуск команды каждый день в 2:00 ночи
-        $schedule->command('app:import-points')->everyFiveMinutes();
+        $schedule->command('app:import-points')->everyThreeMinutes();
     }
 
     /**
